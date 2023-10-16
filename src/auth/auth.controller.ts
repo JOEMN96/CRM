@@ -13,7 +13,7 @@ import { localAuthSignUpDTO, localAuthSignInDTO } from './dto';
 import { Payload, RefreshTokenPayload, Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { Public } from './common';
+import { Public, Role, Roles } from './common';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +33,7 @@ export class AuthController {
     return this.authService.signInLocal(dto);
   }
 
+  // @Roles(Role.USER)
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
   logout(@Req() req: Request) {
