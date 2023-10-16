@@ -1,5 +1,4 @@
 show databases;
-create database crm;
 use crm;
 show tables in crm;
 

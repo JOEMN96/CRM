@@ -94,8 +94,6 @@ export class AuthService {
       },
     });
 
-    console.log(user);
-
     if (!user || !user.refreshToken)
       throw new ForbiddenException('Access denied');
 
