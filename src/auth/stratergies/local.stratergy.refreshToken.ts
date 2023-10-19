@@ -3,6 +3,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Users } from '@prisma/client';
+import { Payload } from '../types';
 
 @Injectable()
 export class localATStratergy extends PassportStrategy(Strategy, 'jwt') {
@@ -10,11 +11,10 @@ export class localATStratergy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.ACCESSTOKENSECRET,
-      passReqToCallback: true,
     });
   }
 
-  validate(payload) {
+  async validate(payload: Payload) {
     return payload;
   }
 }

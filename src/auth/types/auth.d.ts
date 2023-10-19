@@ -7,6 +7,8 @@ export type Payload = {
   email: string;
   id: number;
   role: string;
+  iat: number;
+  exp: number;
 };
 
 export type RefreshTokenPayload = {

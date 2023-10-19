@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ROLES_KEY, Role } from './roles.decorator';
+import { Payload } from '../types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -20,9 +21,14 @@ export class RolesGuard implements CanActivate {
       .get('authorization')
       .replace('Bearer', '')
       .trim();
-    const payload = await new JwtService().verifyAsync(accessToken, {
-      secret: process.env.ACCESSTOKENSECRET,
-    });
+    let payload: Payload | undefined | null;
+    try {
+      payload = await new JwtService().verifyAsync(accessToken, {
+        secret: process.env.ACCESSTOKENSECRET,
+      });
+    } catch (error) {
+      return false;
+    }
 
     return requiredRoles.some((role) => payload.role == role);
   }
