@@ -23,3 +23,9 @@ export class AddUserToProject {
   @IsNumber()
   userId: number;
 }
+
+export class DeleteProjectByName {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+}

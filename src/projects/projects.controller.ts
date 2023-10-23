@@ -3,9 +3,8 @@ import { ProjectsService } from './projects.service';
 import { Role, Roles } from 'src/auth/common';
 import { Request } from 'express';
 import { Payload } from 'src/auth/types';
-import { AddUserToProject, CreateNewProject } from './dto';
+import { AddUserToProject, CreateNewProject, DeleteProjectByName } from './dto';
 import { User } from 'src/utils';
-import { DeleteProjectByName } from './types';
 
 @Controller('projects')
 export class ProjectsController {
@@ -34,7 +33,7 @@ export class ProjectsController {
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Delete('')
-  deleteProjectByID(@Body() projectDto: DeleteProjectByName) {
+  deleteProjectByName(@Body() projectDto: DeleteProjectByName) {
     return this.projectService.deleteProjectByName(projectDto.name);
   }
 

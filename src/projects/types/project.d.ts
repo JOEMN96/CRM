@@ -6,11 +6,6 @@ export interface ICreateNewProject {
   owner: string;
 }
 
-export type DeleteProjectByName = Omit<
-  CreateNewProject,
-  'description' | 'owner'
->;
-
 export interface IAddUserToProject {
   projectName: string;
   userId: number;
