@@ -16,5 +16,5 @@ export type RefreshTokenPayload = {
   email: string;
   iat: number;
   exp: number;
-  refreshToken: string;
+  refresh_token: string;
 };

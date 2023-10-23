@@ -9,13 +9,23 @@ import { Payload } from '../types';
 export class localATStratergy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        localATStratergy.extractJWT,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       secretOrKey: process.env.ACCESSTOKENSECRET,
     });
   }
 
   async validate(payload: Payload) {
     return payload;
+  }
+
+  private static extractJWT(req: Request) {
+    if (req.cookies && req.cookies.access_token) {
+      return req.cookies.access_token;
+    }
+    return null;
   }
 }
 
@@ -27,21 +37,29 @@ export class localRTStratergy extends PassportStrategy(
 ) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        localRTStratergy.extractJWT,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       secretOrKey: process.env.REFRESHTOKENSECRET,
       passReqToCallback: true,
     });
   }
 
-  validate(request: Request, payload: Users) {
-    const refreshToken = request
-      .get('authorization')
-      .replace('Bearer', '')
-      .trim();
+  validate(req: Request, payload: Users) {
+    if (req.cookies && req.cookies.refresh_token) {
+      return {
+        ...payload,
+        refresh_token: req.cookies.refresh_token,
+      };
+    }
+    return null;
+  }
 
-    return {
-      ...payload,
-      refreshToken,
-    };
+  private static extractJWT(req: Request) {
+    if (req.cookies && req.cookies.refresh_token) {
+      return req.cookies.refresh_token;
+    }
+    return null;
   }
 }

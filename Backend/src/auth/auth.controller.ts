@@ -7,12 +7,13 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { localAuthSignUpDTO, localAuthSignInDTO } from './dto';
 import { Payload, RefreshTokenPayload, Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { Public, Role, Roles } from './common';
 
 @Controller('auth')
@@ -22,31 +23,58 @@ export class AuthController {
   @Public()
   @Post('/local/signup')
   @HttpCode(HttpStatus.CREATED)
-  signUpLocal(@Body() dto: localAuthSignUpDTO): Promise<Tokens> {
-    return this.authService.signUpLocal(dto);
+  async signUpLocal(@Body() dto: localAuthSignUpDTO, @Res() res: Response) {
+    let tokens: Tokens = await this.authService.signUpLocal(dto);
+
+    this.sendCookies(res, tokens);
   }
 
   @Public()
   @Post('/local/signin')
   @HttpCode(HttpStatus.OK)
-  signInLocal(@Body() dto: localAuthSignInDTO): Promise<Tokens> {
-    return this.authService.signInLocal(dto);
+  async signInLocal(@Body() dto: localAuthSignInDTO, @Res() res: Response) {
+    let tokens = await this.authService.signInLocal(dto);
+
+    this.sendCookies(res, tokens);
   }
 
   // @Roles(Role.USER)
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Req() req: Request) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     const user = req.user as Payload;
-    return this.authService.logout(user.id);
+    await this.authService.logout(user.id);
+    res.cookie('access_token', '');
+    res.cookie('refresh_token', '');
+    res.send({ status: 'ok' });
   }
 
   @Public()
   @UseGuards(AuthGuard('jwt-refreshToken'))
   @Get('/refresh')
   @HttpCode(HttpStatus.OK)
-  refresh(@Req() req: Request): Promise<Tokens> {
+  async refresh(@Req() req: Request, @Res() res: Response) {
     const user = req.user as RefreshTokenPayload;
-    return this.authService.refresh(user.id, user.refreshToken);
+    const tokens = await this.authService.refresh(user.id, user.refresh_token);
+    this.sendCookies(res, tokens);
+  }
+
+  sendCookies(res: Response, tokens: Tokens) {
+    let sevenDays = 7 * 24 * 3600 * 1000;
+    let sixtyMins = 3600000;
+    res.cookie('access_token', tokens.accessToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'none',
+      expires: new Date(Date.now() + sixtyMins),
+    });
+
+    res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'none',
+      expires: new Date(Date.now() + sevenDays),
+    });
+    res.send({ status: 'ok' });
   }
 }
