@@ -65,14 +65,14 @@ export class AuthController {
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: false,
       secure: false,
-      sameSite: 'none',
+      sameSite: false,
       expires: new Date(Date.now() + sixtyMins),
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: false,
       secure: false,
-      sameSite: 'none',
+      sameSite: false,
       expires: new Date(Date.now() + sevenDays),
     });
     res.send({ status: 'ok' });
