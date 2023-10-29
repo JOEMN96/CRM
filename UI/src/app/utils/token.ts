@@ -1,4 +1,10 @@
-import { setCookie, parseCookies } from "nookies";
+import { parseCookies } from "nookies";
+import { jwtDecode } from "jwt-decode";
 
 const cookies = parseCookies();
-export const token = cookies["access_token"];
+let token = cookies["access_token"];
+
+if (token) {
+  token = jwtDecode(token);
+}
+export default token;

@@ -1,0 +1,26 @@
+.wrapper {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 0 15px;
+}
+
+.logo {
+  max-width: 150px;
+  margin: 10px auto 20px;
+}
+
+.wrapper :global .ant-input-affix-wrapper {
+  margin-bottom: 10px !important;
+}
+.wrapper :global .ant-input-affix-wrapper-status-error {
+  margin-bottom: 0px !important;
+}
+
+.error {
+  font-size: 14px;
+  color: #ff4d4f;
+}
+
+.submitWrapper {
+  text-align: right;
+}

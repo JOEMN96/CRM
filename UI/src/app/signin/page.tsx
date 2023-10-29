@@ -1,7 +1,6 @@
 "use client";
-import styles from "./signup.module.css";
+import styles from "./signin.module.css";
 import { Button, Input } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
@@ -10,27 +9,29 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import token from "../utils/token";
 
-export default function SignUp() {
-  const [errors, seterrors] = useState<Ierrors>({});
+export default function SignIn() {
+  const [errors, seterrors] = useState<IServerErrors>({});
   const router = useRouter();
 
   if (token) {
     router.push("/");
   }
 
-  const signIn = async (postData: IValues) => {
+  const signIn = async (postData: ISignUp) => {
     try {
-      const { status } = await axiosInstance.post("auth/local/signup", postData);
-      if (status === 201) {
+      const { status } = await axiosInstance.post("auth/local/signin", postData);
+      console.log(status);
+
+      if (status === 200) {
         router.push("/");
       }
     } catch (error: any) {
-      if (error.response?.data?.statusCode && error.response.data.statusCode === 409) {
-        seterrors({ ...errors, Taken: "Email already taken" });
+      if (error.response.data.isArray) {
+        seterrors({ ...errors, validationErrors: error.response.data });
       }
 
-      if (error.response?.data?.statusCode && error.response.data.statusCode == 400) {
-        seterrors({ ...errors, validationErrors: error.response.data.message });
+      if (error.response.data.statusCode !== 200) {
+        seterrors({ ...errors, message: error.response.data.message });
       }
 
       // Clear server errors shown in DOM
@@ -46,15 +47,13 @@ export default function SignUp() {
         <img src="/logo.svg" alt="" />
       </div>
       <Formik
-        initialValues={{ email: "", password: "", name: "" }}
-        validate={(values: IValues) => {
+        initialValues={{ email: "", password: "" }}
+        validate={(values: ISignUp) => {
           const errors: any = {};
           if (!values.email) {
             errors.email = "Email is required";
           } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
             errors.email = "Invalid email address";
-          } else if (!values.name) {
-            errors.name = "Name is required";
           }
           return errors;
         }}
@@ -68,17 +67,6 @@ export default function SignUp() {
       >
         {({ values, errors, handleChange, handleBlur, isSubmitting }) => (
           <Form>
-            <Input
-              placeholder="Username"
-              name="name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.name}
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              status={errors.name && "error"}
-            />
-            {errors.name && <p className={styles.error}>{errors.name}</p>}
-
             <Input
               placeholder="Email"
               type="email"
@@ -104,7 +92,7 @@ export default function SignUp() {
 
             <div className={styles.submitWrapper}>
               <Button htmlType="submit" type="primary" loading={isSubmitting}>
-                Sign Up
+                Sign In
               </Button>
             </div>
           </Form>
@@ -112,7 +100,7 @@ export default function SignUp() {
       </Formik>
       <div className="serverErrors">
         {errors.validationErrors?.length ? errors.validationErrors.map((error: string) => <p key={error}> {error}</p>) : ""}
-        {errors.Taken?.length ? <p> {errors.Taken} </p> : ""}
+        {errors.message?.length ? <p> {errors.message} </p> : ""}
       </div>
     </section>
   );
