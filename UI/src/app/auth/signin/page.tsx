@@ -4,17 +4,17 @@ import { Button, Input } from "antd";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
-import axiosInstance from "../utils/axios.instance";
+import axiosInstance from "../../utils/axios.instance";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import token from "../utils/token";
+import token from "../../utils/token";
 
 export default function SignIn() {
   const [errors, seterrors] = useState<IServerErrors>({});
   const router = useRouter();
 
   if (token) {
-    router.push("/");
+    router.push("/dashboard");
   }
 
   const signIn = async (postData: ISignUp) => {
@@ -23,14 +23,14 @@ export default function SignIn() {
       console.log(status);
 
       if (status === 200) {
-        router.push("/");
+        router.push("/dashboard");
       }
     } catch (error: any) {
-      if (error.response.data.isArray) {
+      if (error.response?.data?.isArray) {
         seterrors({ ...errors, validationErrors: error.response.data });
       }
 
-      if (error.response.data.statusCode !== 200) {
+      if (error.response?.data?.statusCode !== 200) {
         seterrors({ ...errors, message: error.response.data.message });
       }
 
@@ -76,12 +76,14 @@ export default function SignIn() {
               value={values.email}
               prefix={<AiOutlineMail className="site-form-item-icon" />}
               status={errors.email && "error"}
+              autoComplete="username"
             />
             {errors.email && <p className={styles.error}>{errors.email}</p>}
             <Input
               placeholder="Password"
               type="password"
               name="password"
+              autoComplete="current-password"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.password}

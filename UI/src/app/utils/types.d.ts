@@ -5,3 +5,8 @@ type USER = {
   iat: number;
   exp: number;
 };
+
+type Cookie = {
+  name: string;
+  value: string;
+};

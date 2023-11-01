@@ -5,10 +5,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
-import axiosInstance from "../utils/axios.instance";
+import axiosInstance from "../../utils/axios.instance";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import token from "../utils/token";
+import token from "../../utils/token";
 
 export default function SignUp() {
   const [errors, seterrors] = useState<Ierrors>({});

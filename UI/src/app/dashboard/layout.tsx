@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "./globals.scss";
 import "antd/dist/reset.css";
-import StyledComponentsRegistry from "./utils/AntdRegistry";
+import StyledComponentsRegistry from "../utils/AntdRegistry";
+import Nav from "../components/nav/nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Nav />
         <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
       </body>
     </html>
