@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.scss";
+import "../globals.scss";
 import "antd/dist/reset.css";
 import StyledComponentsRegistry from "../utils/AntdRegistry";
 import Nav from "../components/nav/nav";

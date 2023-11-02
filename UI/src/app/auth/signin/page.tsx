@@ -4,7 +4,7 @@ import { Button, Input } from "antd";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
-import axiosInstance from "../../utils/axios.instance";
+import api from "../../utils/axios.instance";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import token from "../../utils/token";
@@ -19,7 +19,7 @@ export default function SignIn() {
 
   const signIn = async (postData: ISignUp) => {
     try {
-      const { status } = await axiosInstance.post("auth/local/signin", postData);
+      const { status } = await api.post("auth/local/signin", postData);
       console.log(status);
 
       if (status === 200) {

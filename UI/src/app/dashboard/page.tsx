@@ -1,10 +1,29 @@
+import Projects from "../components/projects/project";
+import api from "../utils/axios.instance";
 import useUser from "../utils/useUser";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
-  if (!useUser()) {
+const getProjects = async () => {
+  try {
+    const { data } = await api.get<Projects[]>("/projects/projectsByUser", {});
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default async function Dashboard() {
+  const user = useUser();
+
+  if (!user) {
     redirect("/auth/signin");
   }
 
-  return <h2>Dashboard</h2>;
+  const projects = await getProjects();
+
+  return (
+    <main>
+      <Projects projects={projects} user={user} />
+    </main>
+  );
 }

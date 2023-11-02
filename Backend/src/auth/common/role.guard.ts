@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ROLES_KEY, Role } from './roles.decorator';
@@ -24,7 +30,7 @@ export class RolesGuard implements CanActivate {
         secret: process.env.ACCESSTOKENSECRET,
       });
     } catch (error) {
-      return false;
+      throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
     }
 
     return requiredRoles.some((role) => payload.role == role);
