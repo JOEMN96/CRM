@@ -1,11 +1,10 @@
-"use client";
-import axiosInstance from "@/app/utils/axios.instance";
-import "./nav.scss";
+import { api } from "@/utils/axios.instance";
+import styles from "./nav.module.scss";
 import { useRouter } from "next/navigation";
 
 const logOutUser = async () => {
   try {
-    await axiosInstance.post("auth/logout");
+    await api.post("auth/logout");
   } catch (e) {}
 };
 
@@ -18,12 +17,12 @@ export default function Nav() {
   };
 
   return (
-    <nav>
-      <div className="logo">
+    <nav className={styles.MainNav}>
+      <div className={styles.logo}>
         <img src="/logo.svg" alt="Logo" />
       </div>
-      <ul className="menus">
-        <li className="logOut" onClick={() => logOutUserClick()}>
+      <ul className={styles.menus}>
+        <li className={styles.logOut} onClick={() => logOutUserClick()}>
           LogOut
         </li>
       </ul>

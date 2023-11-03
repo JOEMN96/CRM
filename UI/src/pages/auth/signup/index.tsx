@@ -1,14 +1,14 @@
 "use client";
-import styles from "./signup.module.css";
+import styles from "./signup.module.scss";
 import { Button, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
-import api from "../../utils/axios.instance";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import token from "../../utils/token";
+import token from "@/utils/token";
+import api from "@/utils/axios.instance";
 
 export default function SignUp() {
   const [errors, seterrors] = useState<Ierrors>({});
@@ -25,11 +25,11 @@ export default function SignUp() {
         router.push("/");
       }
     } catch (error: any) {
-      if (error.response?.data?.statusCode && error.response.data.statusCode === 409) {
+      if (error?.response?.data?.statusCode && error.response.data.statusCode === 409) {
         seterrors({ ...errors, Taken: "Email already taken" });
       }
 
-      if (error.response?.data?.statusCode && error.response.data.statusCode == 400) {
+      if (error?.response?.data?.statusCode && error.response.data.statusCode == 400) {
         seterrors({ ...errors, validationErrors: error.response.data.message });
       }
 

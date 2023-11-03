@@ -1,11 +1,11 @@
-import styles from "./signin.module.css";
+import styles from "./signin.module.scss";
 import { Button, Input } from "antd";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/utils/axios.instance";
+import { api } from "@/utils/axios.instance";
 import token from "@/utils/token";
 
 export default function SignIn() {
@@ -25,13 +25,11 @@ export default function SignIn() {
         router.push("/dashboard");
       }
     } catch (error: any) {
-      console.log(error);
-
-      if (error.response?.data?.isArray) {
+      if (error?.response?.data?.isArray) {
         seterrors({ ...errors, validationErrors: error.response.data });
       }
 
-      if (error.response?.data?.statusCode !== 200) {
+      if (error?.response?.data?.statusCode && error?.response?.data?.statusCode !== 200) {
         seterrors({ ...errors, message: error.response.data.message });
       }
 

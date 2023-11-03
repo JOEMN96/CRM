@@ -1,5 +1,4 @@
-"use client";
-import api from "@/app/utils/axios.instance";
+import { api } from "@/utils/axios.instance";
 
 type Props = {
   projects: Projects[] | undefined;
@@ -16,8 +15,8 @@ const getProjects = async () => {
     console.log(error);
   }
 };
-
-export default function Projects({ projects, user }: Props) {
+// { projects, user }: Props
+export default function Projects() {
   // console.log(projects, user);
 
   return (
