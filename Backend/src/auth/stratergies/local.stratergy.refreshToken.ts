@@ -46,7 +46,7 @@ export class localRTStratergy extends PassportStrategy(
     });
   }
 
-  validate(req: Request, payload: Users) {
+  validate(req: Request, payload: any) {
     if (req.cookies && req.cookies.refresh_token) {
       return {
         ...payload,

@@ -1,5 +1,5 @@
-import { parseCookies } from "nookies";
 import { jwtDecode } from "jwt-decode";
+import { parseCookies } from "nookies";
 
 const cookies = parseCookies();
 let token = cookies["access_token"];

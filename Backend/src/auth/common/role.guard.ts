@@ -30,7 +30,7 @@ export class RolesGuard implements CanActivate {
         secret: process.env.ACCESSTOKENSECRET,
       });
     } catch (error) {
-      throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
+      return false;
     }
 
     return requiredRoles.some((role) => payload.role == role);

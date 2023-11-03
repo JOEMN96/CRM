@@ -6,7 +6,7 @@ function useUser() {
   let accessToken: Cookie | undefined = cookieStore.get("access_token");
 
   let user: null | USER = null;
-  if (isCookie(accessToken) && accessToken?.value) {
+  if (isCookie(accessToken)) {
     user = jwtDecode(accessToken.value);
   }
   return user;

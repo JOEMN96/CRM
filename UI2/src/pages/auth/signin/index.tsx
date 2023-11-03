@@ -1,13 +1,12 @@
-"use client";
 import styles from "./signin.module.css";
 import { Button, Input } from "antd";
 import { AiOutlineMail } from "react-icons/ai";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
-import api from "../../utils/axios.instance";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import token from "../../utils/token";
+import api from "@/utils/axios.instance";
+import token from "@/utils/token";
 
 export default function SignIn() {
   const [errors, seterrors] = useState<IServerErrors>({});
@@ -26,6 +25,8 @@ export default function SignIn() {
         router.push("/dashboard");
       }
     } catch (error: any) {
+      console.log(error);
+
       if (error.response?.data?.isArray) {
         seterrors({ ...errors, validationErrors: error.response.data });
       }
