@@ -61,12 +61,12 @@ export class AuthController {
 
   sendCookies(res: Response, tokens: Tokens) {
     let sevenDays = 7 * 24 * 3600 * 1000;
-    let sixtyMins = 3600000;
+    let thirtyMins = 1800000;
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: false,
       secure: false,
       sameSite: false,
-      expires: new Date(Date.now() + sixtyMins),
+      expires: new Date(Date.now() + thirtyMins),
     });
 
     res.cookie('refresh_token', tokens.refreshToken, {
