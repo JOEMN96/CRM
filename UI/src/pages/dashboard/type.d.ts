@@ -1,5 +1,12 @@
-type Projects = IProject[] | undefined;
+type Props = {
+  projects: Projects[] | undefined;
+};
 
-interface IProject {
+type Projects = {
+  id: number;
   name: string;
-}
+  description: string;
+  owner: string;
+  userId: number;
+  createdAt: Date;
+};
