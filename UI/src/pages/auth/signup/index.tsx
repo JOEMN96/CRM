@@ -7,22 +7,22 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form } from "formik";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import token from "@/utils/token";
-import api from "@/utils/axios.instance";
+import { api } from "@/utils/axios.instance";
+import useUser from "@/utils/useUser";
 
 export default function SignUp() {
   const [errors, seterrors] = useState<Ierrors>({});
   const router = useRouter();
 
-  if (token) {
-    router.push("/");
+  if (useUser()) {
+    router.push("/dashboard");
   }
 
   const signIn = async (postData: IValues) => {
     try {
       const { status } = await api.post("auth/local/signup", postData);
       if (status === 201) {
-        router.push("/");
+        router.push("/dashboard");
       }
     } catch (error: any) {
       if (error?.response?.data?.statusCode && error.response.data.statusCode === 409) {

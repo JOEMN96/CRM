@@ -8,7 +8,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <main>
+    <>
       <Head>
         <title>CRM</title>
         <meta name="description" content="CRM" />
@@ -17,6 +17,6 @@ export default function Layout({ children }: Props) {
       </Head>
       <Nav />
       {children}
-    </main>
+    </>
   );
 }

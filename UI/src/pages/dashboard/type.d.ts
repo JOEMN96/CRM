@@ -1,5 +1,6 @@
 type Props = {
   projects: Projects[] | undefined;
+  user: USER | null;
 };
 
 type Projects = {

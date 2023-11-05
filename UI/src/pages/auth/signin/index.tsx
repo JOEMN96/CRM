@@ -6,13 +6,13 @@ import { Formik, Form } from "formik";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/utils/axios.instance";
-import token from "@/utils/token";
+import useUser from "@/utils/useUser";
 
 export default function SignIn() {
   const [errors, seterrors] = useState<IServerErrors>({});
   const router = useRouter();
 
-  if (token) {
+  if (useUser()) {
     router.push("/dashboard");
   }
 
