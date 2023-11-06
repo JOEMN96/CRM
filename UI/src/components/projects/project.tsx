@@ -3,6 +3,8 @@ import { FloatButton } from "antd";
 import { IoMdAdd } from "react-icons/io";
 import styles from "./project.module.scss";
 import { redirect } from "next/navigation";
+import useUser from "@/utils/useUser";
+import { useRouter } from "next/router";
 
 // type Props = {
 //   projects: Projects[] | undefined;
@@ -21,17 +23,20 @@ import { redirect } from "next/navigation";
 // }
 // { projects, user }: Props
 
-export default function Projects({ projects, user }: ProjectsProps) {
-  if (!user || !projects) {
-    redirect("/auth/signIn");
-  }
-
+export default function Projects({ projects }: ProjectsProps) {
   const addNewProject = () => {};
+  const router = useRouter();
+
+  const user = useUser();
+
+  if (!user) {
+    router.push("/auth/signin");
+  }
 
   return (
     <section>
       <p className={styles.projectsWarning}>
-        {projects.length === 0 && user.role === "SUPERADMIN"
+        {projects && user && projects.length === 0 && user.role === "SUPERADMIN"
           ? "Currently theres is no Projects. Create new project by clicking the add button at the bottom right"
           : "Currently there is no project assigned to you !"}
       </p>

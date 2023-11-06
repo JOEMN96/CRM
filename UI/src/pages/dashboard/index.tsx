@@ -1,24 +1,24 @@
-import type { ReactElement } from "react";
+import { use, type ReactElement } from "react";
 import Layout from "@/components/Layout";
-import Projects from "@/components/projects/project";
+// import Projects from "@/components/projects/Project";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
-import useUser from "@/utils/useUser";
+import dynamic from "next/dynamic";
 
-const Dashboard = ({ projects, user }: Props) => {
+const Projects = dynamic(import("@/components/projects/Project"), { ssr: false });
+
+const Dashboard = ({ projects }: Props) => {
   return (
     <>
-      <Projects projects={projects} user={user} />
+      <Projects projects={projects} />
     </>
   );
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   setContext(context);
-  const user = useUser(context.req.cookies.access_token);
-
-  const { data } = await api.get("projects/projectsByUser");
-  return { props: { projects: data, user } };
+  const res = await api.get("projects/projectsByUser");
+  return { props: { projects: res.data } };
 }
 
 Dashboard.getLayout = function getLayout(page: ReactElement) {
