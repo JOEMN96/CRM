@@ -1,10 +1,8 @@
-import { use, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import Layout from "@/components/Layout";
-// import Projects from "@/components/projects/Project";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
-
 const Projects = dynamic(import("@/components/projects/Project"), { ssr: false });
 
 const Dashboard = ({ projects }: Props) => {

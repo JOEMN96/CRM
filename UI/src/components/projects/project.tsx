@@ -2,7 +2,6 @@ import { api } from "@/utils/axios.instance";
 import { FloatButton } from "antd";
 import { IoMdAdd } from "react-icons/io";
 import styles from "./project.module.scss";
-import { redirect } from "next/navigation";
 import useUser from "@/utils/useUser";
 import { useRouter } from "next/router";
 
