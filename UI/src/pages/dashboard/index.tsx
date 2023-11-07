@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
+import useUser from "@/utils/useUser";
 const Projects = dynamic(import("@/components/projects/Project"), { ssr: false });
 
 const Dashboard = ({ projects }: Props) => {

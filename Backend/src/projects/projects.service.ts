@@ -1,7 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { IAddUserToProject, ICreateNewProject } from './types';
+import {
+  IAddUserToProject,
+  ICreateNewProject,
+  IPossibleProjectOwners,
+} from './types';
 
 @Injectable()
 export class ProjectsService {
@@ -108,6 +112,19 @@ export class ProjectsService {
         userId,
         description: project.description,
         owner: project.owner,
+      },
+    });
+  }
+
+  async getPossibleProjectOwners(): Promise<IPossibleProjectOwners[] | []> {
+    return await this.dataSource.users.findMany({
+      where: {
+        role: { in: ['ADMIN', 'SUPERADMIN'] },
+        active: true,
+      },
+      select: {
+        name: true,
+        role: true,
       },
     });
   }

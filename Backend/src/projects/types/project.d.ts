@@ -10,3 +10,8 @@ export interface IAddUserToProject {
   projectName: string;
   userId: number;
 }
+
+export interface IPossibleProjectOwners {
+  name: string;
+  role: string;
+}
