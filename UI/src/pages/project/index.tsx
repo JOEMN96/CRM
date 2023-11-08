@@ -3,25 +3,25 @@ import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
+import styles from "./projectPage.module.scss";
+const Calender = dynamic(import("@/components/Calender"), { ssr: false });
 
-const Projects = dynamic(import("@/components/projects/Project"), { ssr: false });
-
-const Dashboard = ({ projects }: Props) => {
+const Project = () => {
   return (
     <>
-      <Projects projects={projects} />
+      <Calender />
     </>
   );
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   setContext(context);
-  const res = await api.get("projects/projectsByUser");
-  return { props: { projects: res.data } };
+  //   const res = await api.get("projects/projectsByUser");
+  return { props: { data: "Test" } };
 }
 
-Dashboard.getLayout = function getLayout(page: ReactElement) {
+Project.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default Dashboard;
+export default Project;

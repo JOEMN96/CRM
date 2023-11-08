@@ -1,0 +1,10 @@
+.wrapper {
+  padding: 10px;
+  :global .fc {
+    height: calc(100vh - 70px);
+  }
+
+  :global .fc-col-header .fc-scrollgrid-sync-inner {
+    padding: 20px;
+  }
+}
