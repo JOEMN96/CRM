@@ -7,4 +7,8 @@
   :global .fc-col-header .fc-scrollgrid-sync-inner {
     padding: 20px;
   }
+
+  :global .fc-daygrid-day.fc-day-today {
+    background-color: gainsboro;
+  }
 }

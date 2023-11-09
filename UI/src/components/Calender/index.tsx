@@ -4,8 +4,13 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./calender.module.scss";
 import moment from "moment";
 import { IAllowFunc, IDateArgs, IDateSelect } from "./types";
+import CalenderModal from "./CalenderModal/CalenderModal";
+import { useState } from "react";
+import { notification } from "antd";
 
 export default function Calender() {
+  const [openModal, setopenModal] = useState(false);
+
   //  Data from server
 
   // "https://fullcalendar.io/demo-events.json"
@@ -19,26 +24,24 @@ export default function Calender() {
   let calenderDate = moment().startOf("month").format("YYYY-MM-DD");
   let currentDate = moment().format("YYYY-MM-DD h:mm:ss a");
 
-  let editConstraint = {
-    start: moment().format("YYYY-MM-DD[T]00:00:00"),
-    end: moment().add(1, "days").format("YYYY-MM-DD[T]24:60:60"),
+  let timeframeToEdit = {
+    start: moment().subtract(24, "hour").format("YYYY-MM-DD[T]hh:mm:ss"),
+    end: moment().add(1, "hour").format("YYYY-MM-DD[T]hh:mm:ss"),
   };
 
-  // END Data from server
+  function canEdit(cellDate: string) {
+    cellDate += moment().format("[T]hh:mm:ss");
+    return moment(cellDate).isBetween(
+      moment(timeframeToEdit.start, "YYYY-MM-DD[T]hh:mm:ss"),
+      moment(timeframeToEdit.end, "YYYY-MM-DD[T]hh:mm:ss")
+    );
+  }
 
-  const serverTime = {
-    start: moment().format("YYYY-MM-DD"),
-    end: moment().add(2, "days").format("YYYY-MM-DD"),
-  };
-
-  console.log(serverTime);
+  // END Data from serve
 
   const handleDateClick = (arg: IDateArgs) => {
-    // console.log(arg);
-    // console.log(arg.view?.getCurrentData());
+    if (!canEdit(arg.dateStr)) return;
   };
-
-  console.log(editConstraint);
 
   return (
     <section className={styles.wrapper}>
@@ -52,11 +55,20 @@ export default function Calender() {
         events={events}
         dateClick={handleDateClick} // event fire's when we click the day
         eventStartEditable={false} // Disable drag
-        selectConstraint={editConstraint} // set select or click constraint
         eventClick={function (obj) {
           console.log("event item is clicked");
         }}
+        selectAllow={function (span, mov) {
+          if (canEdit(span.startStr)) {
+            return true;
+          } else {
+            notification.open({ message: "You can't add here", type: "info", duration: 2 });
+            return false;
+          }
+        }}
       />
+
+      <CalenderModal setopenModal={setopenModal} openModal={openModal} />
     </section>
   );
 }

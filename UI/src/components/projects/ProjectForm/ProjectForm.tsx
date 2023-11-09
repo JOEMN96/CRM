@@ -53,7 +53,7 @@ export default function ProjectForm({ onClose, open }: ProjectForm) {
         onSubmit={async (values: IProjectFormValues, { setSubmitting }: FormikHelpers<IProjectFormValues>) => {
           setTimeout(() => {
             if (!values.owner) {
-              return notification.open({ message: "Owner field is required ", type: "error" });
+              return notification.open({ message: "Owner field is required ", type: "error", duration: 3 });
             }
             addOwner(values);
             setSubmitting(false);
