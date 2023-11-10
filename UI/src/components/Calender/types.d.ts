@@ -9,3 +9,7 @@ interface ICalenderModal {
   setopenModal: (mode: boolean) => void;
   openModal: boolean;
 }
+
+interface IAddTime {
+  workDescription: string;
+}

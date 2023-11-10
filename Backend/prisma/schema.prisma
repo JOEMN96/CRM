@@ -19,6 +19,7 @@ model Users {
   profile UserProfile?
   active Boolean @default(true)
   projects Project[] 
+  calender Calender[]
 }
 
 enum Role {
@@ -41,4 +42,16 @@ model Project {
   peoples Users? @relation( fields: [userId], references: [id])
   userId Int?
   createdAt DateTime @default(now())
+  calendar Calender[]
+}
+
+model Calender {
+   id    Int    @id @default(autoincrement() )
+   workDescription String  @db.VarChar(500)
+   createdAt DateTime @default(now())
+   month Int @db.TinyInt 
+   user Users @relation(fields: [userId], references: [id])
+   userId Int 
+   project Project @relation(fields: [projectID], references: [id])
+   projectID Int
 }

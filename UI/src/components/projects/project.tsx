@@ -11,7 +11,6 @@ export default function Projects({ projects }: ProjectsProps) {
   const router = useRouter();
   const user = useUser();
   const [open, setOpen] = useState(false);
-  console.log(projects);
 
   if (!user) {
     router.push("/auth/signin");

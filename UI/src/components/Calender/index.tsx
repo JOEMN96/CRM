@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -5,7 +6,6 @@ import styles from "./calender.module.scss";
 import moment from "moment";
 import { IAllowFunc, IDateArgs, IDateSelect } from "./types";
 import CalenderModal from "./CalenderModal/CalenderModal";
-import { useState } from "react";
 import { notification } from "antd";
 
 export default function Calender() {
@@ -39,8 +39,20 @@ export default function Calender() {
 
   // END Data from serve
 
+  useEffect(() => {
+    AddEditableClass();
+  }, []);
+
+  const AddEditableClass = () => {
+    let startDateWithoutTime = timeframeToEdit.start.split("T")[0];
+    let endDateWithoutTime = timeframeToEdit.end.split("T")[0];
+    document.querySelector(`td[data-date="${startDateWithoutTime}"]`)?.classList.add("Editable");
+    document.querySelector(`td[data-date="${endDateWithoutTime}"]`)?.classList.add("Editable");
+  };
+
   const handleDateClick = (arg: IDateArgs) => {
     if (!canEdit(arg.dateStr)) return;
+    setopenModal(true);
   };
 
   return (
@@ -58,7 +70,7 @@ export default function Calender() {
         eventClick={function (obj) {
           console.log("event item is clicked");
         }}
-        selectAllow={function (span, mov) {
+        selectAllow={function (span) {
           if (canEdit(span.startStr)) {
             return true;
           } else {
@@ -66,6 +78,7 @@ export default function Calender() {
             return false;
           }
         }}
+        hiddenDays={[0, 6]}
       />
 
       <CalenderModal setopenModal={setopenModal} openModal={openModal} />
