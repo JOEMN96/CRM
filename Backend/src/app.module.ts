@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AtGuard, RolesGuard } from './auth/common';
 import { ProjectsModule } from './projects/projects.module';
 import { CalenderModule } from './calender/calendar.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CalenderModule } from './calender/calendar.module';
     PrismaModule,
     ProjectsModule,
     CalenderModule,
+    UsersModule,
   ],
   providers: [
     {

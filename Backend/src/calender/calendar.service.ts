@@ -73,7 +73,7 @@ export class CalenderService {
 
   //  Helpers
   canAddTimeEntry(): Boolean {
-    let currentTime = moment().format('YYYY-MM-DD h:mm:ss');
+    let currentTime = moment().format('YYYY-MM-DD[T]h:mm:ss');
     let timeframeToEdit = this.getTimeFrameToEdit();
 
     return moment(currentTime).isBetween(
@@ -85,7 +85,7 @@ export class CalenderService {
   getTimeFrameToEdit() {
     return {
       start: moment().subtract(24, 'hour').format('YYYY-MM-DD[T]hh:mm:ss'),
-      end: moment().add(1, 'hour').format('YYYY-MM-DD[T]hh:mm:ss'),
+      end: moment().add(1, 'day').format('YYYY-MM-DD[T]hh:mm:ss'),
     };
   }
 
