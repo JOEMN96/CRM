@@ -23,10 +23,13 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const accessToken = request.cookies.access_token;
+    let token = request.cookies.access_token;
+    if (!token) {
+      token = request.cookies.refresh_token;
+    }
     let payload: Payload | undefined | null;
     try {
-      payload = await new JwtService().verifyAsync(accessToken, {
+      payload = await new JwtService().verifyAsync(token, {
         secret: process.env.ACCESSTOKENSECRET,
       });
     } catch (error) {
