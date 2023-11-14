@@ -14,7 +14,7 @@ import { localAuthSignUpDTO, localAuthSignInDTO } from './dto';
 import { Payload, RefreshTokenPayload, Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
-import { Public, Role, Roles } from './common';
+import { Public, RtGuard } from './common';
 
 @Controller('auth')
 export class AuthController {
@@ -38,7 +38,6 @@ export class AuthController {
     this.sendCookies(res, tokens);
   }
 
-  // @Roles(Role.USER)
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request, @Res() res: Response) {
@@ -50,7 +49,7 @@ export class AuthController {
   }
 
   @Public()
-  @UseGuards(AuthGuard('jwt-refreshToken'))
+  @UseGuards(RtGuard)
   @Get('/refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(@Req() req: Request, @Res() res: Response) {

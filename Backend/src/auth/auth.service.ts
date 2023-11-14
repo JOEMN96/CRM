@@ -139,7 +139,7 @@ export class AuthService {
         },
         {
           secret: process.env.REFRESHTOKENSECRET,
-          expiresIn: 60 * 30, // 30 mins
+          expiresIn: 60 * 60 * 24 * 7, // 7 Days
         },
       ),
       this.jwtService.signAsync(
@@ -150,7 +150,7 @@ export class AuthService {
         },
         {
           secret: process.env.ACCESSTOKENSECRET,
-          expiresIn: 60 * 60 * 24 * 7, // 7 Days
+          expiresIn: 60 * 30, // 30 mins
         },
       ),
     ]);
