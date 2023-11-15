@@ -3,22 +3,38 @@ import { Button, Input, Modal, notification } from "antd";
 import { IAddTime, ICalenderModal } from "../types";
 import { Formik, Form, FormikHelpers } from "formik";
 import styles from "./calenderModal.module.scss";
+import { api } from "@/utils/axios.instance";
+import { useRouter } from "next/router";
 
 const { TextArea } = Input;
 
-export default function ({ setopenModal, openModal }: ICalenderModal) {
+export default function ({ setopenModal, openModal, date, selectedEvent }: ICalenderModal) {
+  const router = useRouter();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const handleOk = () => {
+  const handleOk = async (formData: IAddTime) => {
     setConfirmLoading(true);
-    setTimeout(() => {
-      setopenModal(false);
-      setConfirmLoading(false);
-    }, 2000);
+    try {
+      const res = await api.post("calender/add", { project: 1, ...formData, date });
+      console.log(res);
+
+      if (!res) {
+        notification.open({ message: "Server error", type: "error" });
+      } else if (res.status === 201) {
+        notification.open({ message: "Entry created", type: "success" });
+      } else if (res.status === 206) {
+        router.replace(router.asPath);
+        notification.open({ message: "Entry updated", type: "info" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setConfirmLoading(false);
+    setopenModal(false);
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setopenModal(false);
   };
 
@@ -28,15 +44,11 @@ export default function ({ setopenModal, openModal }: ICalenderModal) {
         <div className="add-time">
           <Formik
             initialValues={{
-              workDescription: "",
+              workDescription: selectedEvent,
             }}
             onSubmit={async (values: IAddTime, { setSubmitting }: FormikHelpers<IAddTime>) => {
               setTimeout(() => {
-                if (!values.workDescription) {
-                  return notification.open({ message: "Owner field is required ", type: "error", duration: 3 });
-                }
-
-                handleOk();
+                handleOk(values);
                 // addOwner(values);
               }, 500);
             }}
@@ -48,7 +60,7 @@ export default function ({ setopenModal, openModal }: ICalenderModal) {
                   name="workDescription"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values.workDescription}
+                  value={selectedEvent}
                   id="workDescription"
                   required
                 />

@@ -9,7 +9,7 @@ export class CalenderService {
   constructor(private dataSource: PrismaService) {}
 
   async addNewEntry(data: NewEntry, user: Payload) {
-    let canEdit = this.canAddTimeEntry();
+    let canEdit = this.canAddTimeEntry(data.date);
 
     if (!canEdit)
       throw new HttpException('Time frame is closed', HttpStatus.BAD_REQUEST);
@@ -29,8 +29,8 @@ export class CalenderService {
     const entryforDayAlreadyExits = await this.dataSource.calender.findFirst({
       where: {
         createdAt: {
-          gte: new Date(this.getTimeFrameToEdit().start.split('T')[0]),
-          lte: new Date(this.getTimeFrameToEdit().end.split('T')[0]),
+          gte: new Date((data.date + this.getCurrentTime()).split('T')[0]),
+          lte: new Date((data.date + this.getCurrentTime()).split('T')[0]),
         },
       },
     });
@@ -54,6 +54,7 @@ export class CalenderService {
         user: {
           connect: { id: user.id },
         },
+        createdAt: new Date(data.date),
       },
     });
 
@@ -61,7 +62,7 @@ export class CalenderService {
   }
 
   async getcurrentMonthEntries(user: Payload, dto: getAllEntries) {
-    return await this.dataSource.calender.findMany({
+    let res = await this.dataSource.calender.findMany({
       where: { userId: user.id, month: dto.month, projectID: dto.projectId },
       select: {
         workDescription: true,
@@ -69,27 +70,52 @@ export class CalenderService {
         createdAt: true,
       },
     });
+
+    let entries = res.map(({ createdAt, workDescription, id }) => {
+      return {
+        title: workDescription,
+        start: moment(createdAt).format('YYYY-MM-DD[T]HH:mm:ss'),
+        end: moment(createdAt).format('YYYY-MM-DD[T]HH:mm:ss'),
+        id: id,
+      };
+    });
+
+    return {
+      entries,
+      config: {
+        timeFrame: this.getTimeFrameToEdit(),
+        ClientCalendarDate: moment().startOf('month').format('YYYY-MM-DD'),
+      },
+    };
   }
 
   //  Helpers
-  canAddTimeEntry(): Boolean {
-    let currentTime = moment().format('YYYY-MM-DD[T]hh:mm:ss');
+  canAddTimeEntry(customTime: string | null): Boolean {
+    let currentTime = moment().format('YYYY-MM-DD[T]HH:mm:ss');
+    if (customTime) {
+      currentTime = moment(currentTime).format('YYYY-MM-DD[T]HH:mm:ss');
+    }
+
     let timeframeToEdit = this.getTimeFrameToEdit();
 
     return moment(currentTime).isBetween(
-      moment(timeframeToEdit.start, 'YYYY-MM-DD[T]hh:mm:ss'),
-      moment(timeframeToEdit.end, 'YYYY-MM-DD[T]hh:mm:ss'),
+      moment(timeframeToEdit.start, 'YYYY-MM-DD[T]HH:mm:ss'),
+      moment(timeframeToEdit.end, 'YYYY-MM-DD[T]HH:mm:ss'),
     );
   }
 
   getTimeFrameToEdit() {
     return {
-      start: moment().subtract(24, 'hour').format('YYYY-MM-DD[T]hh:mm:ss'),
-      end: moment().add(1, 'hour').format('YYYY-MM-DD[T]hh:mm:ss'),
+      start: moment().subtract(24, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
+      end: moment().add(4, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
     };
   }
 
   getCurrentMonth() {
     return moment().month() + 1;
+  }
+
+  getCurrentTime() {
+    return moment().format('[T]HH:mm:ss');
   }
 }

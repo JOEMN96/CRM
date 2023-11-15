@@ -1,87 +1,117 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./calender.module.scss";
 import moment from "moment";
-import { IAllowFunc, IDateArgs, IDateSelect } from "./types";
+import { IAllowFunc, IDateArgs, IDateSelect, IEventClickArg, IEventsCalendarType } from "./types";
 import CalenderModal from "./CalenderModal/CalenderModal";
 import { notification } from "antd";
 
-export default function Calender() {
+export default function Calender({ config, entries }: ICalenderData) {
   const [openModal, setopenModal] = useState(false);
+  const calenderRef: React.Ref<any> = useRef(null);
+  const [currenClickedDate, setCurrenClickedDate] = useState("");
+  const [selectedEvent, setselectedEvent] = useState("");
 
-  //  Data from server
+  function canEdit(cellDate: string | undefined) {
+    if (!cellDate) return false;
+    cellDate += moment().format("[T]HH:mm:ss");
 
-  // "https://fullcalendar.io/demo-events.json"
-  let events = [
-    {
-      title: "event2",
-      start: "2023-11-09",
-      end: "2023-11-09",
-    },
-  ];
-  let calenderDate = moment().startOf("month").format("YYYY-MM-DD");
-  let currentDate = moment().format("YYYY-MM-DD h:mm:ss a");
-
-  let timeframeToEdit = {
-    start: moment().subtract(24, "hour").format("YYYY-MM-DD[T]hh:mm:ss"),
-    end: moment().add(1, "hour").format("YYYY-MM-DD[T]hh:mm:ss"),
-  };
-
-  function canEdit(cellDate: string) {
-    cellDate += moment().format("[T]hh:mm:ss");
     return moment(cellDate).isBetween(
-      moment(timeframeToEdit.start, "YYYY-MM-DD[T]hh:mm:ss"),
-      moment(timeframeToEdit.end, "YYYY-MM-DD[T]hh:mm:ss")
+      moment(config.timeFrame.start, "YYYY-MM-DD[T]HH:mm:ss"),
+      moment(config.timeFrame.end, "YYYY-MM-DD[T]HH:mm:ss")
     );
   }
 
-  // END Data from serve
+  const renderEventContent = (eventInfo: any) => {
+    return (
+      <div>
+        <p>{eventInfo.event.title}</p>
+      </div>
+    );
+  };
 
-  useEffect(() => {
+  const handleDateChange = (date: any) => {
     AddEditableClass();
-  }, []);
+  };
+
+  const handleEventClick = (eventObj: IEventClickArg) => {
+    if (eventObj.jsEvent.target instanceof HTMLElement) {
+      let date = (eventObj.jsEvent?.target.closest(".fc-day") as HTMLElement)?.dataset.date;
+      if (!canEdit(date)) {
+        return notification.open({ message: "You can't add here", type: "info", duration: 2 });
+      }
+      if (date) {
+        setCurrenClickedDate(date);
+        // setselectedEvent(getEventTitle(date))
+        setopenModal(true);
+      }
+    }
+  };
 
   const AddEditableClass = () => {
-    let startDateWithoutTime = timeframeToEdit.start.split("T")[0];
-    let endDateWithoutTime = timeframeToEdit.end.split("T")[0];
+    let startDateWithoutTime = config.timeFrame.start.split("T")[0];
+    let endDateWithoutTime = config.timeFrame.end.split("T")[0];
     document.querySelector(`td[data-date="${startDateWithoutTime}"]`)?.classList.add("Editable");
     document.querySelector(`td[data-date="${endDateWithoutTime}"]`)?.classList.add("Editable");
   };
 
   const handleDateClick = (arg: IDateArgs) => {
     if (!canEdit(arg.dateStr)) return;
+    setCurrenClickedDate(arg.dateStr);
+
+    let clickedEvent = getEventTitle(arg.dateStr);
+
+    if (clickedEvent) {
+      setselectedEvent(clickedEvent);
+    }
     setopenModal(true);
+  };
+
+  const handleSelectAllow: IAllowFunc = (span) => {
+    if (canEdit(span.startStr)) {
+      return true;
+    } else {
+      notification.open({ message: "You can't add here", type: "info", duration: 2 });
+      return false;
+    }
+  };
+
+  const getEventTitle = (date: string) => {
+    let ck = calenderRef.current.calendar.getEvents().find((ele: any) => {
+      if (moment(ele.start).format("YYYY-MM-DD") === date) {
+        return ele;
+      }
+    });
+    if (ck?._def?.title) {
+      return ck._def.title as string;
+    }
   };
 
   return (
     <section className={styles.wrapper}>
       <FullCalendar
-        initialDate={calenderDate}
+        ref={calenderRef}
+        initialDate={config.ClientCalendarDate}
         editable={true}
         selectable={true} // Enable select
         headerToolbar={{ end: "prev,next" }}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={events}
+        events={entries as IEventsCalendarType}
         dateClick={handleDateClick} // event fire's when we click the day
         eventStartEditable={false} // Disable drag
-        eventClick={function (obj) {
-          console.log("event item is clicked");
-        }}
-        selectAllow={function (span) {
-          if (canEdit(span.startStr)) {
-            return true;
-          } else {
-            notification.open({ message: "You can't add here", type: "info", duration: 2 });
-            return false;
-          }
-        }}
+        eventClick={(eventObject) => handleEventClick(eventObject)}
+        selectAllow={(cell) => handleSelectAllow(cell, null)}
         hiddenDays={[0, 6]}
+        eventContent={renderEventContent} // Custom event renderer
+        datesSet={(dateInfo) => handleDateChange(dateInfo)} // This event fires when there is date (Like Month) change
+        // eventAdd={}
+        // eventChange={}
       />
 
-      <CalenderModal setopenModal={setopenModal} openModal={openModal} />
+      <CalenderModal setopenModal={setopenModal} openModal={openModal} date={currenClickedDate} selectedEvent={selectedEvent} />
     </section>
   );
 }

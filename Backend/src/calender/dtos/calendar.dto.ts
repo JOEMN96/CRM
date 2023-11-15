@@ -8,6 +8,10 @@ export class NewEntry {
   @IsNotEmpty()
   @IsNumber()
   project: number;
+
+  @IsNotEmpty()
+  @IsString()
+  date: string;
 }
 
 export class getAllEntries {
