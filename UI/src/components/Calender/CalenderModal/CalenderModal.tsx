@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Input, Modal, notification } from "antd";
 import { IAddTime, ICalenderModal } from "../types";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
 import styles from "./calenderModal.module.scss";
 import { api } from "@/utils/axios.instance";
 import { useRouter } from "next/router";
@@ -39,41 +39,43 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
 
   return (
     <>
-      <Modal className={styles.addProjectModal} title="Add Time" open={openModal} onCancel={handleCancel} footer={[]}>
-        <div className="add-time">
-          <Formik
-            initialValues={{
-              workDescription: selectedEvent,
-            }}
-            onSubmit={async (values: IAddTime, { setSubmitting }: FormikHelpers<IAddTime>) => {
-              setTimeout(() => {
-                handleOk(values);
-              }, 500);
-            }}
-            enableReinitialize={true}
-          >
-            {({ handleChange, handleBlur, initialValues, setValues, setFieldValue, setFieldTouched, values }) => (
-              <Form className={styles.projectForm}>
-                <TextArea
-                  rows={4}
-                  name="workDescription"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={initialValues.workDescription}
-                  id="workDescription"
-                  required
-                />
+      {openModal && (
+        <Modal className={styles.addProjectModal} title="Add Time" open={openModal} onCancel={handleCancel} footer={[]}>
+          <div className="add-time">
+            <Formik
+              initialValues={{
+                workDescription: selectedEvent,
+              }}
+              onSubmit={async (values: IAddTime, { setSubmitting }: FormikHelpers<IAddTime>) => {
+                setTimeout(() => {
+                  handleOk(values);
+                }, 500);
+              }}
+              enableReinitialize={true}
+            >
+              {({ handleChange, handleBlur, initialValues, setValues, setFieldValue, setFieldTouched, values }) => (
+                <Form className={styles.projectForm}>
+                  <TextArea
+                    rows={4}
+                    name="workDescription"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    defaultValue={initialValues.workDescription}
+                    id="workDescription"
+                    required
+                  />
 
-                <div className={styles.btnRight}>
-                  <Button htmlType="submit" type="primary" loading={confirmLoading}>
-                    Create
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </Modal>
+                  <div className={styles.btnRight}>
+                    <Button htmlType="submit" type="primary" loading={confirmLoading}>
+                      Create
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }

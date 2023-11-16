@@ -79,7 +79,6 @@ export class CalenderService {
         id: id,
       };
     });
-    console.log('en4tri4e', this.getTimeFrameToEdit());
 
     return {
       entries,
