@@ -44,8 +44,11 @@ export default function Calender({ config, entries }: ICalenderData) {
       }
       if (date) {
         setCurrenClickedDate(date);
-        // setselectedEvent(getEventTitle(date))
         setopenModal(true);
+      }
+      let eventTitle = getEventTitle(date);
+      if (eventTitle) {
+        setselectedEvent(eventTitle);
       }
     }
   };
@@ -65,6 +68,8 @@ export default function Calender({ config, entries }: ICalenderData) {
 
     if (clickedEvent) {
       setselectedEvent(clickedEvent);
+    } else {
+      setselectedEvent("");
     }
     setopenModal(true);
   };
@@ -78,7 +83,7 @@ export default function Calender({ config, entries }: ICalenderData) {
     }
   };
 
-  const getEventTitle = (date: string) => {
+  const getEventTitle = (date: string | undefined) => {
     let ck = calenderRef.current.calendar.getEvents().find((ele: any) => {
       if (moment(ele.start).format("YYYY-MM-DD") === date) {
         return ele;

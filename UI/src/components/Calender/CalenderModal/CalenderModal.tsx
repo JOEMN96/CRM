@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Modal, notification } from "antd";
 import { IAddTime, ICalenderModal } from "../types";
 import { Formik, Form, FormikHelpers } from "formik";
@@ -16,18 +16,17 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
     setConfirmLoading(true);
     try {
       const res = await api.post("calender/add", { project: 1, ...formData, date });
-      console.log(res);
-
       if (!res) {
         notification.open({ message: "Server error", type: "error" });
       } else if (res.status === 201) {
         notification.open({ message: "Entry created", type: "success" });
+        router.replace(router.asPath);
       } else if (res.status === 206) {
         router.replace(router.asPath);
         notification.open({ message: "Entry updated", type: "info" });
       }
     } catch (error) {
-      console.log(error);
+      notification.open({ message: "Something went wrong", type: "error" });
     }
 
     setConfirmLoading(false);
@@ -49,18 +48,18 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
             onSubmit={async (values: IAddTime, { setSubmitting }: FormikHelpers<IAddTime>) => {
               setTimeout(() => {
                 handleOk(values);
-                // addOwner(values);
               }, 500);
             }}
+            enableReinitialize={true}
           >
-            {({ values, errors, handleChange, handleBlur }) => (
+            {({ handleChange, handleBlur, initialValues, setValues, setFieldValue, setFieldTouched, values }) => (
               <Form className={styles.projectForm}>
                 <TextArea
                   rows={4}
                   name="workDescription"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={selectedEvent}
+                  value={initialValues.workDescription}
                   id="workDescription"
                   required
                 />

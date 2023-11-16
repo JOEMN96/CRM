@@ -79,6 +79,7 @@ export class CalenderService {
         id: id,
       };
     });
+    console.log('en4tri4e', this.getTimeFrameToEdit());
 
     return {
       entries,
@@ -90,10 +91,19 @@ export class CalenderService {
   }
 
   //  Helpers
-  canAddTimeEntry(customTime: string | null): Boolean {
-    let currentTime = moment().format('YYYY-MM-DD[T]HH:mm:ss');
-    if (customTime) {
-      currentTime = moment(currentTime).format('YYYY-MM-DD[T]HH:mm:ss');
+  canAddTimeEntry(customDate: string | null): Boolean {
+    let currentTime: string;
+
+    try {
+      if (customDate) {
+        currentTime =
+          moment(customDate, 'YYYY-MM-DD').format('YYYY-MM-DD') +
+          this.getCurrentTime();
+      } else {
+        currentTime = moment().format('YYYY-MM-DD[T]HH:mm:ss');
+      }
+    } catch (error) {
+      return false;
     }
 
     let timeframeToEdit = this.getTimeFrameToEdit();
@@ -106,7 +116,7 @@ export class CalenderService {
 
   getTimeFrameToEdit() {
     return {
-      start: moment().subtract(24, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
+      start: moment().subtract(25, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
       end: moment().add(4, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
     };
   }
