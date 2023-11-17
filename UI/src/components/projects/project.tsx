@@ -6,6 +6,7 @@ import useUser from "@/utils/useUser";
 import { useRouter } from "next/router";
 import ProjectForm from "./ProjectForm/ProjectForm";
 import ProjectCard from "./ProjectCard/ProjectCard";
+import Link from "next/link";
 
 export default function Projects({ projects }: ProjectsProps) {
   const router = useRouter();
@@ -39,14 +40,16 @@ export default function Projects({ projects }: ProjectsProps) {
       <div className={styles.projectCardWrapper}>
         {projects && projects.length !== 0
           ? projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                name={project.name}
-                createdAt={project.createdAt}
-                description={project.description}
-                owner={project.owner}
-                user={user?.role}
-              />
+              <Link href={`project/${project.id}`} key={project.id}>
+                <ProjectCard
+                  key={project.id}
+                  name={project.name}
+                  createdAt={project.createdAt}
+                  description={project.description}
+                  owner={project.owner}
+                  user={user?.role}
+                />
+              </Link>
             ))
           : ""}
       </div>

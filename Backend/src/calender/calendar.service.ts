@@ -62,14 +62,26 @@ export class CalenderService {
   }
 
   async getcurrentMonthEntries(user: Payload, dto: getAllEntries) {
-    let res = await this.dataSource.calender.findMany({
-      where: { userId: user.id, month: dto.month, projectID: dto.projectId },
-      select: {
-        workDescription: true,
-        id: true,
-        createdAt: true,
-      },
-    });
+
+    let [res, projectAvailable] = await Promise.all([
+      this.dataSource.calender.findMany({
+        where: { userId: user.id, month: dto.month, projectID: dto.projectId },
+        select: {
+          workDescription: true,
+          id: true,
+          createdAt: true,
+        },
+      }),
+      this.dataSource.project.findFirst({
+        where: { id: dto.projectId },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
+
+    if (!projectAvailable)
+      throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
 
     let entries = res.map(({ createdAt, workDescription, id }) => {
       return {

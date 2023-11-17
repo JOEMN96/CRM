@@ -3,7 +3,6 @@ import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
-import styles from "./projectPage.module.scss";
 
 const Calender = dynamic(import("@/components/Calender"), { ssr: false });
 
@@ -17,8 +16,15 @@ const Project = (calenderData: ICalenderData) => {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   setContext(context);
-  const { data } = await api.get("calender/getEntries", { data: { month: 11, projectId: 1 } as IGetEntriesGet });
-  return { props: data };
+
+  try {
+    const { data } = await api.get("calender/getEntries", {
+      data: { month: 11, projectId: Number(context.query.slug) } as IGetEntriesGet,
+    });
+    return { props: data };
+  } catch (error) {
+    return { notFound: true };
+  }
 }
 
 Project.getLayout = function getLayout(page: ReactElement) {
