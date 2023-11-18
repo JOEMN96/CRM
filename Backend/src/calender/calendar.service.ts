@@ -32,12 +32,14 @@ export class CalenderService {
           gte: new Date((data.date + this.getCurrentTime()).split('T')[0]),
           lte: new Date((data.date + this.getCurrentTime()).split('T')[0]),
         },
+        projectID: projectID.id,
+        userId: user.id,
       },
     });
 
     if (entryforDayAlreadyExits) {
       await this.dataSource.calender.update({
-        where: { id: entryforDayAlreadyExits.id },
+        where: { id: entryforDayAlreadyExits.id, projectID: projectID.id },
         data: { workDescription: data.workDescription },
       });
 
@@ -62,7 +64,6 @@ export class CalenderService {
   }
 
   async getcurrentMonthEntries(user: Payload, dto: getAllEntries) {
-
     let [res, projectAvailable] = await Promise.all([
       this.dataSource.calender.findMany({
         where: { userId: user.id, month: dto.month, projectID: dto.projectId },

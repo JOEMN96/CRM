@@ -11,9 +11,11 @@
     margin-bottom: 5px;
     text-decoration: none;
   }
-  .delete {
+  button {
     margin-top: 20px;
     color: red;
     font-size: 24px;
+    display: grid;
+    align-items: center;
   }
 }

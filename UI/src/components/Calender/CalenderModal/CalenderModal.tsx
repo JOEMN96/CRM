@@ -12,10 +12,12 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
   const router = useRouter();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  const projectId = Number(router.asPath.split("project/")[1]);
+
   const handleOk = async (formData: IAddTime) => {
     setConfirmLoading(true);
     try {
-      const res = await api.post("calender/add", { project: 1, ...formData, date });
+      const res = await api.post("calender/add", { project: projectId, ...formData, date });
       if (!res) {
         notification.open({ message: "Server error", type: "error" });
       } else if (res.status === 201) {

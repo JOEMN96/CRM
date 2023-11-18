@@ -109,7 +109,7 @@ export default function Calender({ config, entries }: ICalenderData) {
         eventStartEditable={false} // Disable drag
         eventClick={(eventObject) => handleEventClick(eventObject)}
         selectAllow={(cell) => handleSelectAllow(cell, null)}
-        hiddenDays={[0, 6]}
+        // hiddenDays={[0, 6]}
         eventContent={renderEventContent} // Custom event renderer
         datesSet={(dateInfo) => handleDateChange(dateInfo)} // This event fires when there is date (Like Month) change
         // eventAdd={}

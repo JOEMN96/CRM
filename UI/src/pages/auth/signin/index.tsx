@@ -19,7 +19,6 @@ export default function SignIn() {
   const signIn = async (postData: ISignUp) => {
     try {
       const { status } = await api.post("auth/local/signin", postData);
-      console.log(status);
 
       if (status === 200) {
         router.push("/dashboard");
