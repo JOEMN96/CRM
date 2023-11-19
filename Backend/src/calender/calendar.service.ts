@@ -115,7 +115,10 @@ export class CalenderService {
         currentTime = moment().format('YYYY-MM-DD[T]HH:mm:ss');
       }
     } catch (error) {
-      return false;
+      throw new HttpException(
+        'Time Calculation error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     let timeframeToEdit = this.getTimeFrameToEdit();
@@ -129,7 +132,7 @@ export class CalenderService {
   getTimeFrameToEdit() {
     return {
       start: moment().subtract(25, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
-      end: moment().add(4, 'hours').format('YYYY-MM-DD[T]HH:mm:ss'),
+      end: moment().add(10, 'minutes').format('YYYY-MM-DD[T]HH:mm:ss'),
     };
   }
 

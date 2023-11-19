@@ -7,6 +7,7 @@ import moment from "moment";
 import { IAllowFunc, IDateArgs, IDateSelect, IEventClickArg, IEventsCalendarType } from "./types";
 import CalenderModal from "./CalenderModal/CalenderModal";
 import { notification } from "antd";
+import { Popover } from "antd";
 
 export default function Calender({ config, entries }: ICalenderData) {
   const [openModal, setopenModal] = useState(false);
@@ -26,9 +27,9 @@ export default function Calender({ config, entries }: ICalenderData) {
 
   const renderEventContent = (eventInfo: any) => {
     return (
-      <div>
-        <p>{eventInfo.event.title}</p>
-      </div>
+      <Popover content={eventInfo.event.title}>
+        <p style={{ overflow: "hidden" }}>{eventInfo.event.title}</p>
+      </Popover>
     );
   };
 

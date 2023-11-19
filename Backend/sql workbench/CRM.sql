@@ -3,11 +3,11 @@ use crm;
 show tables in crm;
 select * from users;
 describe users;
+update users set active=1 where id=10;
 					
 delete from users;
 
 select * from project;
-update users set name="Joe admin" where id=21;
 
 select * from calender;
 

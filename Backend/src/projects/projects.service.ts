@@ -87,6 +87,7 @@ export class ProjectsService {
       await this.dataSource.project.findFirst({
         where: {
           userId,
+          name: projectName,
         },
       }),
     ]);

@@ -1,12 +1,18 @@
+import { useState } from "react";
 import { api } from "@/utils/axios.instance";
 import style from "./projectCard.module.scss";
 import moment from "moment";
 import { AiFillDelete } from "react-icons/ai";
 import { notification } from "antd";
 import { useRouter } from "next/router";
-import { Button, Popconfirm } from "antd";
+import { Button, Popconfirm, Popover } from "antd";
+import { IoPersonAdd } from "react-icons/io5";
+import dynamic from "next/dynamic";
+
+const AddUser = dynamic(import("../AddUser/AddUser"), { ssr: false });
 
 export default function ProjectCard({ name, description, owner, createdAt, user }: IProjectCard) {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const formattedDate = moment(createdAt).format("d-mm-YYYY");
 
@@ -30,8 +36,13 @@ export default function ProjectCard({ name, description, owner, createdAt, user 
   const cancel = (e?: React.MouseEvent<HTMLElement | undefined>) => {
     if (e) {
       e.stopPropagation();
-      e.nativeEvent.stopImmediatePropagation();
     }
+  };
+
+  const openAddUserPopup = (e: React.MouseEvent<HTMLElement | undefined>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(true);
   };
 
   return (
@@ -42,18 +53,31 @@ export default function ProjectCard({ name, description, owner, createdAt, user 
       <p className="time">Created: {formattedDate}</p>
 
       {user && user === "SUPERADMIN" ? (
-        <Popconfirm
-          title="Delete the Project"
-          description="Are you sure to delete this task? This will remove all data permenently"
-          onConfirm={confirm}
-          onCancel={cancel}
-          okText="Yes"
-          overlayInnerStyle={{ margin: "0 10px" }}
-        >
-          <Button>
-            <AiFillDelete onClick={(e: React.MouseEvent<HTMLElement>) => e.preventDefault()} className={style.delete} />
-          </Button>
-        </Popconfirm>
+        <div className={style.adminArea} onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}>
+          <Popconfirm
+            title="Delete the Project"
+            description="Are you sure to delete this task? This will remove all data permenently"
+            onConfirm={confirm}
+            onCancel={cancel}
+            okText="Yes"
+            overlayInnerStyle={{ margin: "0 10px" }}
+          >
+            <Button onClick={(e: React.MouseEvent<HTMLElement>) => e.preventDefault()}>
+              <AiFillDelete className={style.delete} />
+            </Button>
+          </Popconfirm>
+          <Popover content={"Add user to project"}>
+            <Button
+              onClick={(e: React.MouseEvent<HTMLElement>) => {
+                e.preventDefault();
+                openAddUserPopup(e);
+              }}
+            >
+              <IoPersonAdd className={style.addUsers} />
+            </Button>
+          </Popover>
+          {open && <AddUser setOpen={setOpen} open={open} />}
+        </div>
       ) : (
         ""
       )}

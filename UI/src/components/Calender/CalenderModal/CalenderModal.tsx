@@ -69,7 +69,7 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
 
                   <div className={styles.btnRight}>
                     <Button htmlType="submit" type="primary" loading={confirmLoading}>
-                      Create
+                      {selectedEvent.length ? "Update" : "Create"}
                     </Button>
                   </div>
                 </Form>

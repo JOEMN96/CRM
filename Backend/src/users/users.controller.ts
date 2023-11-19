@@ -21,7 +21,7 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   getAllUsers() {
-    this.usersService.getAllUsers();
+    return this.usersService.getAllUsers();
   }
 
   @Get('/:id')
