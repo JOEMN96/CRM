@@ -46,13 +46,16 @@ export default function AddUser({ setOpen, open }: AddUserProps) {
   const rowSelection: TableRowSelection<IUsers> = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[], selectedRows: IUsers[]) => {
-      console.log("selectedRowKeys changed: ", newSelectedRowKeys, selectedRows);
       setSelectedRowKeys(newSelectedRowKeys);
     },
     getCheckboxProps: (record: IUsers) => ({
       disabled: record.active === false, // Column configuration not to be checked
       name: record.name,
     }),
+    onSelect: (record, isSelected) => {
+      record.selected = isSelected;
+      // console.log(users);
+    },
   };
 
   return (
