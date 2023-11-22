@@ -7,6 +7,8 @@ update users set active=1 where id=10;
 					
 delete from users;
 
+select * from _projecttousers;
+
 select * from project;
 
 select * from calender;

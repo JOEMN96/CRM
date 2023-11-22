@@ -16,12 +16,10 @@ export class CreateNewProject {
 
 export class AddUserToProject {
   @IsNotEmpty()
-  @IsString()
-  projectName: string;
-
-  @IsNotEmpty()
   @IsNumber()
-  userId: number;
+  projectId: number;
+
+  userIds: number[];
 }
 
 export class DeleteProjectByName {

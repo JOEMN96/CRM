@@ -1,11 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  IAddUserToProject,
-  ICreateNewProject,
-  IPossibleProjectOwners,
-} from './types';
+import { ICreateNewProject, IPossibleProjectOwners } from './types';
+import { AddUserToProject } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -17,13 +14,15 @@ export class ProjectsService {
     });
   }
 
-  async getUsersProjectsById(id: number): Promise<Project[]> {
-    return await this.dataSource.project.findMany({
-      where: {
-        userId: id,
-      },
-      distinct: ['name'],
-    });
+  async getUsersProjects(userId: number) {
+    return await this.dataSource.users
+      .findUnique({
+        where: { id: userId },
+        select: {
+          projects: true,
+        },
+      })
+      .projects();
   }
 
   async createNewProject(
@@ -70,51 +69,51 @@ export class ProjectsService {
     throw new HttpException('Project deleted', HttpStatus.OK);
   }
 
-  async addUserToProject(dto: IAddUserToProject): Promise<Project> {
-    const { projectName, userId } = dto;
+  async addUsersToProject(dto: AddUserToProject): Promise<Project> {
+    const { projectId, userIds } = dto;
 
-    const [project, id, alreadyAdded] = await Promise.all([
+    const [project, alreadyAdded] = await Promise.all([
       await this.dataSource.project.findFirst({
         where: {
-          name: projectName,
+          id: projectId,
         },
       }),
-      await this.dataSource.users.findUnique({
+      await this.dataSource.project.findMany({
         where: {
-          id: userId,
-        },
-      }),
-      await this.dataSource.project.findFirst({
-        where: {
-          userId,
-          name: projectName,
+          userId: { in: userIds },
+          id: projectId,
         },
       }),
     ]);
 
-    if (!id) {
-      throw new HttpException('Invalid UserID', HttpStatus.BAD_REQUEST);
-    }
-
     if (!project) {
-      throw new HttpException('Invalid ProjectName', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid project ID', HttpStatus.BAD_REQUEST);
     }
 
-    if (alreadyAdded) {
+    if (alreadyAdded.length) {
       throw new HttpException(
-        'User is already added to the project',
+        'Some users are already added to the project',
         HttpStatus.BAD_REQUEST,
       );
     }
+    let ids: { id: number }[] = userIds.map((id) => ({ id: id }));
 
-    return await this.dataSource.project.create({
-      data: {
-        name: projectName,
-        userId,
-        description: project.description,
-        owner: project.owner,
-      },
-    });
+    try {
+      let res = await this.dataSource.project.update({
+        where: {
+          id: projectId,
+        },
+        data: {
+          peoples: { connect: ids },
+        },
+      });
+      return res;
+    } catch (error) {
+      throw new HttpException(
+        'Unable to add user to project',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async getPossibleProjectOwners(): Promise<IPossibleProjectOwners[] | []> {
@@ -128,5 +127,10 @@ export class ProjectsService {
         role: true,
       },
     });
+  }
+
+  async getAssignedUsersForProject() {
+    // Implementation required
+    return false;
   }
 }

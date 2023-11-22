@@ -26,7 +26,7 @@ export class ProjectsController {
     if (user.role === 'ADMIN' || user.role === 'SUPERADMIN') {
       return this.projectService.getAllprojects();
     }
-    return this.projectService.getUsersProjectsById(user.id);
+    return this.projectService.getUsersProjects(user.id);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -54,10 +54,10 @@ export class ProjectsController {
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
-  @Post('addUser')
+  @Post('addUsers')
   @HttpCode(HttpStatus.OK)
-  addUserToProject(@Body() dto: AddUserToProject) {
-    return this.projectService.addUserToProject(dto);
+  addUsersToProject(@Body() dto: AddUserToProject) {
+    return this.projectService.addUsersToProject(dto);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -65,5 +65,12 @@ export class ProjectsController {
   @HttpCode(HttpStatus.OK)
   getOwners() {
     return this.projectService.getPossibleProjectOwners();
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Get('getAssignedUsersForProject')
+  @HttpCode(HttpStatus.OK)
+  getAssignedUsersForProject() {
+    return this.projectService.getAssignedUsersForProject();
   }
 }

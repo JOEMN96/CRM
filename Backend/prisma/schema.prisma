@@ -39,7 +39,7 @@ model Project {
   name String
   description String
   owner String 
-  peoples Users? @relation( fields: [userId], references: [id])
+  peoples Users[]
   userId Int?
   createdAt DateTime @default(now())
   calendar Calender[]
