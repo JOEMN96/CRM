@@ -20,9 +20,8 @@
       "label": "Backend"
     },
     {
-      "type": "npm",
-      "script": "dev",
-      "path": "ui",
+      "type": "shell",
+      "command": "cd UI; npm run dev",
       "problemMatcher": [],
       "label": "UI"
     }
