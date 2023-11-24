@@ -19,11 +19,17 @@ export class AddUserToProject {
   @IsNumber()
   projectId: number;
 
-  userIds: number[];
+  addedusers: number[];
 }
 
 export class DeleteProjectByName {
   @IsNotEmpty()
   @IsString()
   name: string;
+}
+
+export class getAssignedUsers {
+  @IsNotEmpty()
+  @IsNumber()
+  projectId: number;
 }

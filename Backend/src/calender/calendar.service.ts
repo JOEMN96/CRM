@@ -64,7 +64,7 @@ export class CalenderService {
   }
 
   async getcurrentMonthEntries(user: Payload, dto: getAllEntries) {
-    let [res, projectAvailable] = await Promise.all([
+    let [res, projectExits, isUserHaveAccessToProject] = await Promise.all([
       this.dataSource.calender.findMany({
         where: { userId: user.id, month: dto.month, projectID: dto.projectId },
         select: {
@@ -79,9 +79,31 @@ export class CalenderService {
           id: true,
         },
       }),
+      this.dataSource.users
+        .findFirst({
+          where: {
+            id: user.id,
+          },
+          select: { projects: true },
+        })
+        .projects(),
     ]);
 
-    if (!projectAvailable)
+    const availableProjectsForUser = isUserHaveAccessToProject.map(
+      (project) => project.id,
+    );
+
+    if (
+      user.role === 'USER' &&
+      !availableProjectsForUser.includes(projectExits.id)
+    ) {
+      throw new HttpException(
+        "User don't have access to this project",
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (!projectExits)
       throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
 
     let entries = res.map(({ createdAt, workDescription, id }) => {

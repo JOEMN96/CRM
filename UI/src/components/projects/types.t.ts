@@ -24,4 +24,5 @@ interface IProjectCard {
   owner: string;
   createdAt: Date;
   user: string | undefined;
+  projectId: number;
 }

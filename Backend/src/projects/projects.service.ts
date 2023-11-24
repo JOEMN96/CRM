@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ICreateNewProject, IPossibleProjectOwners } from './types';
-import { AddUserToProject } from './dto';
+import { AddUserToProject, getAssignedUsers } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -70,17 +70,11 @@ export class ProjectsService {
   }
 
   async addUsersToProject(dto: AddUserToProject): Promise<Project> {
-    const { projectId, userIds } = dto;
+    const { projectId, addedusers } = dto;
 
-    const [project, alreadyAdded] = await Promise.all([
+    const [project] = await Promise.all([
       await this.dataSource.project.findFirst({
         where: {
-          id: projectId,
-        },
-      }),
-      await this.dataSource.project.findMany({
-        where: {
-          userId: { in: userIds },
           id: projectId,
         },
       }),
@@ -90,13 +84,7 @@ export class ProjectsService {
       throw new HttpException('Invalid project ID', HttpStatus.BAD_REQUEST);
     }
 
-    if (alreadyAdded.length) {
-      throw new HttpException(
-        'Some users are already added to the project',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    let ids: { id: number }[] = userIds.map((id) => ({ id: id }));
+    let addedIds: { id: number }[] = addedusers.map((id) => ({ id: id }));
 
     try {
       let res = await this.dataSource.project.update({
@@ -104,7 +92,7 @@ export class ProjectsService {
           id: projectId,
         },
         data: {
-          peoples: { connect: ids },
+          peoples: { set: [], connect: addedIds },
         },
       });
       return res;
@@ -129,8 +117,50 @@ export class ProjectsService {
     });
   }
 
-  async getAssignedUsersForProject() {
+  async getAssignedUsersForProject(id: number) {
     // Implementation required
-    return false;
+
+    let AlreadyAddedUsers = await this.getUsersAssociatedwithProject(id);
+
+    let AllUsers = await this.dataSource.users.findMany({
+      select: {
+        email: true,
+        name: true,
+        role: true,
+        active: true,
+        id: true,
+      },
+    });
+
+    //  Adding selected field to show differentiate users that are added to this project
+    return AllUsers.map((user) => {
+      if (AlreadyAddedUsers.includes(user.id)) {
+        (user as any).selected = true;
+      } else {
+        (user as any).selected = false;
+      }
+      return user;
+    });
+  }
+
+  // helpers
+  async getUsersAssociatedwithProject(id: number): Promise<number[]> {
+    const result = await this.dataSource.project.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        peoples: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (result && result.peoples) {
+      return result.peoples.map((item) => item.id);
+    }
+    return [];
   }
 }

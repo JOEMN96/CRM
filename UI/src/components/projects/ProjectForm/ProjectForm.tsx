@@ -14,9 +14,7 @@ export default function ProjectForm({ onClose, open }: ProjectForm) {
     router.replace(router.asPath);
   };
 
-  const onSearch = (value: string) => {
-    console.log("search:", value);
-  };
+  const onSearch = (value: string) => {};
 
   const filterOption = (input: string, option?: { value: string }) => {
     return (option?.value ?? "").toLowerCase().includes(input.toLowerCase());

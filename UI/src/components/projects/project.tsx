@@ -48,6 +48,7 @@ export default function Projects({ projects }: ProjectsProps) {
                   description={project.description}
                   owner={project.owner}
                   user={user?.role}
+                  projectId={project.id}
                 />
               </Link>
             ))

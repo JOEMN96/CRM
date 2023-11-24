@@ -7,12 +7,19 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  HttpException,
+  Query,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Role, Roles } from 'src/auth/common';
 import { Request } from 'express';
 import { Payload } from 'src/auth/types';
-import { AddUserToProject, CreateNewProject, DeleteProjectByName } from './dto';
+import {
+  AddUserToProject,
+  CreateNewProject,
+  DeleteProjectByName,
+  getAssignedUsers,
+} from './dto';
 import { User } from 'src/utils';
 
 @Controller('projects')
@@ -21,7 +28,7 @@ export class ProjectsController {
 
   @Get('projectsByUser')
   @HttpCode(HttpStatus.OK)
-  getUsersProjectsById(@Req() req: Request) {
+  getUsersProjects(@Req() req: Request) {
     const user = req.user as Payload;
     if (user.role === 'ADMIN' || user.role === 'SUPERADMIN') {
       return this.projectService.getAllprojects();
@@ -68,9 +75,12 @@ export class ProjectsController {
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
-  @Get('getAssignedUsersForProject')
+  @Get('getAssignedUsersForProject?')
   @HttpCode(HttpStatus.OK)
-  getAssignedUsersForProject() {
-    return this.projectService.getAssignedUsersForProject();
+  getAssignedUsersForProject(@Query('id') id: string) {
+    if (!Number(id)) {
+      throw new HttpException('Bad ID', HttpStatus.BAD_REQUEST);
+    }
+    return this.projectService.getAssignedUsersForProject(Number(id));
   }
 }

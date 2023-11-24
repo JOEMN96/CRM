@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 
 const AddUser = dynamic(import("../AddUser/AddUser"), { ssr: false });
 
-export default function ProjectCard({ name, description, owner, createdAt, user }: IProjectCard) {
+export default function ProjectCard({ name, description, owner, createdAt, user, projectId }: IProjectCard) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const formattedDate = moment(createdAt).format("d-mm-YYYY");
@@ -76,7 +76,7 @@ export default function ProjectCard({ name, description, owner, createdAt, user 
               <IoPersonAdd className={style.addUsers} />
             </Button>
           </Popover>
-          {open && <AddUser setOpen={setOpen} open={open} />}
+          {open && <AddUser projectId={projectId} setOpen={setOpen} open={open} />}
         </div>
       ) : (
         ""

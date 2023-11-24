@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
@@ -23,7 +23,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     });
     return { props: data };
   } catch (error) {
-    return { notFound: true };
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/dashboard",
+      },
+    };
   }
 }
 

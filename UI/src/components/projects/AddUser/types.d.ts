@@ -1,6 +1,7 @@
 interface AddUserProps {
   setOpen: (a: boolean) => void;
   open: boolean;
+  projectId: number;
 }
 
 interface IUsers {
@@ -10,4 +11,5 @@ interface IUsers {
   name: string;
   role: string;
   selected?: boolean;
+  modified?: boolean;
 }

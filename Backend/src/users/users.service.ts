@@ -31,7 +31,6 @@ export class UsersService {
       },
       select: { email: true, name: true, role: true, active: true, id: true },
     });
-    console.log(user);
 
     if (user?.id) {
       return user;
