@@ -4,6 +4,8 @@ import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import { Josefin_Sans } from "next/font/google";
+import { store } from "../store/store";
+import { Provider } from "react-redux";
 
 const fredoka = Josefin_Sans({ subsets: ["latin"] });
 
@@ -18,11 +20,15 @@ type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page) => page);
 
-  return getLayout(
-    <main className={fredoka.className}>
-      <StyledComponentsRegistry>
-        <Component {...pageProps} />
-      </StyledComponentsRegistry>
-    </main>
+  return (
+    <Provider store={store}>
+      {getLayout(
+        <main className={fredoka.className}>
+          <StyledComponentsRegistry>
+            <Component {...pageProps} />
+          </StyledComponentsRegistry>
+        </main>
+      )}
+    </Provider>
   );
 }

@@ -1,5 +1,4 @@
 import { jwtDecode } from "jwt-decode";
-import { GetServerSidePropsContext } from "next";
 import { parseCookies } from "nookies";
 
 function useUser(access_tokenFromServer?: string): null | undefined | USER {

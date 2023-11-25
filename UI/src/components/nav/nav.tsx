@@ -2,6 +2,7 @@ import { api } from "@/utils/axios.instance";
 import styles from "./nav.module.scss";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useUser from "@/utils/useUser";
 
 const logOutUser = async () => {
   try {
@@ -11,6 +12,9 @@ const logOutUser = async () => {
 
 export default function Nav() {
   const { push } = useRouter();
+
+  let user = useUser();
+  console.log(user);
 
   const logOutUserClick = async () => {
     await logOutUser();
@@ -25,6 +29,7 @@ export default function Nav() {
         </Link>
       </div>
       <ul className={styles.menus}>
+        <li>{user?.email}</li>
         <li className={styles.logOut} onClick={() => logOutUserClick()}>
           LogOut
         </li>
