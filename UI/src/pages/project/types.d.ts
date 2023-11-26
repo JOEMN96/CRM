@@ -22,3 +22,8 @@ interface IGetEntriesGet {
   month: number;
   projectId: number;
 }
+
+interface IProjectPageProps {
+  calenderData: ICalenderData;
+  page: number;
+}

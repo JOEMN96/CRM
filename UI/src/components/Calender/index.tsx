@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -110,11 +110,12 @@ export default function Calender({ config, entries }: ICalenderData) {
         eventStartEditable={false} // Disable drag
         eventClick={(eventObject) => handleEventClick(eventObject)}
         selectAllow={(cell) => handleSelectAllow(cell, null)}
-        // hiddenDays={[0, 6]}
+        hiddenDays={[0, 6]}
         eventContent={renderEventContent} // Custom event renderer
         datesSet={(dateInfo) => handleDateChange(dateInfo)} // This event fires when there is date (Like Month) change
         // eventAdd={}
         // eventChange={}
+        contentHeight={"auto"}
       />
 
       <CalenderModal setopenModal={setopenModal} openModal={openModal} date={currenClickedDate} selectedEvent={selectedEvent} />

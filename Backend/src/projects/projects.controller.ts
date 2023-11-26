@@ -77,10 +77,20 @@ export class ProjectsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Get('getAssignedUsersForProject?')
   @HttpCode(HttpStatus.OK)
-  getAssignedUsersForProject(@Query('id') id: string) {
+  getAllUsersAlongWithAssignedUsers(@Query('id') id: string) {
     if (!Number(id)) {
       throw new HttpException('Bad ID', HttpStatus.BAD_REQUEST);
     }
-    return this.projectService.getAssignedUsersForProject(Number(id));
+    return this.projectService.getAllUsersAlongWithAssignedUsers(Number(id));
+  }
+
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @Get('getAssignedUsersRelatedToProject?')
+  @HttpCode(HttpStatus.OK)
+  getAssignedUsersToProject(@Query('id') id: string) {
+    if (!Number(id)) {
+      throw new HttpException('Bad ID', HttpStatus.BAD_REQUEST);
+    }
+    return this.projectService.getUsersAssignedToProject(Number(id));
   }
 }

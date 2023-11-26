@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ICreateNewProject, IPossibleProjectOwners } from './types';
-import { AddUserToProject, getAssignedUsers } from './dto';
+import { AddUserToProject } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -117,8 +117,8 @@ export class ProjectsService {
     });
   }
 
-  async getAssignedUsersForProject(id: number) {
-    // Implementation required
+  async getAllUsersAlongWithAssignedUsers(id: number) {
+    // This Endpoint is for add users page
 
     let AlreadyAddedUsers = await this.getUsersAssociatedwithProject(id);
 
@@ -141,6 +141,30 @@ export class ProjectsService {
       }
       return user;
     });
+  }
+
+  async getUsersAssignedToProject(id: number) {
+    try {
+      let res = await this.dataSource.project.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          peoples: {
+            select: {
+              id: true,
+              name: true,
+              active: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      });
+      return res.peoples;
+    } catch (error) {
+      throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // helpers

@@ -1,14 +1,25 @@
 import { type ReactElement } from "react";
+import styles from "./project.module.scss";
 import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import useUser from "@/utils/useUser";
 
 const Calender = dynamic(import("@/components/Calender"), { ssr: false });
 
-const Project = (calenderData: ICalenderData) => {
+const Project = ({ calenderData, page }: IProjectPageProps) => {
+  let user = useUser();
+
   return (
     <>
+      {user?.role !== "USER" && (
+        <section className={styles.adminDetailsWrapper}>
+          <Link href={`/viewEntries/${page}`}>View Details</Link>
+        </section>
+      )}
+
       <Calender entries={calenderData.entries} config={calenderData.config} />
     </>
   );
@@ -16,12 +27,17 @@ const Project = (calenderData: ICalenderData) => {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   setContext(context);
-
+  const page = Number(context.query.slug);
   try {
     const { data } = await api.get("calender/getEntries", {
-      data: { month: 11, projectId: Number(context.query.slug) } as IGetEntriesGet,
+      data: { month: 11, projectId: page } as IGetEntriesGet,
     });
-    return { props: data };
+    return {
+      props: {
+        calenderData: data,
+        page,
+      },
+    };
   } catch (error) {
     return {
       redirect: {
