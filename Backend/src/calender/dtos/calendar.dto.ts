@@ -23,3 +23,9 @@ export class getAllEntries {
   @IsNumber()
   projectId: number;
 }
+
+export class GetUsersById {
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number;
+}

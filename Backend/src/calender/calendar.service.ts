@@ -124,6 +124,24 @@ export class CalenderService {
     };
   }
 
+  async getEntriesById(userId: number) {
+    let res = await this.dataSource.users.findUnique({
+      where: { id: userId },
+      select: {
+        calender: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
+    });
+    if (res) {
+      return res.calender;
+    } else {
+      return [];
+    }
+  }
+
   //  Helpers
   canAddTimeEntry(customDate: string | null): Boolean {
     let currentTime: string;

@@ -9,3 +9,16 @@ type EntriesUser = {
   name: string;
   role: string;
 };
+
+interface IEntries {
+  id: number;
+  workDescription: string;
+  createdAt: Date;
+  month: number;
+  userId: number;
+  projectID: number;
+}
+
+interface IEntriesTableProps {
+  entries: IEntries[];
+}

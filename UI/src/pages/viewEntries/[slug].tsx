@@ -8,7 +8,7 @@ import styles from "./style.module.scss";
 const UsersTable = dynamic(import("@/components/ViewEntries/ViewEntriesUsersTable"));
 
 const ViewEntries = ({ projectId, users }: IViewEntriesProps) => {
-  console.log(users);
+
   if (!users.length) {
     return <h2>Currently there is no users added to this project !</h2>;
   }

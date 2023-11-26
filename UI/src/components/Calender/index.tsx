@@ -18,6 +18,7 @@ export default function Calender({ config, entries }: ICalenderData) {
   function canEdit(cellDate: string | undefined) {
     if (!cellDate) return false;
     cellDate += moment().format("[T]HH:mm:ss");
+    console.log(cellDate, config.timeFrame.start, config.timeFrame.end);
 
     return moment(cellDate).isBetween(
       moment(config.timeFrame.start, "YYYY-MM-DD[T]HH:mm:ss"),
