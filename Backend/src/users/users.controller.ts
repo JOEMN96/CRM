@@ -14,18 +14,17 @@ import { Role, Roles } from 'src/auth/common';
 import { CreateNewUser } from './dto';
 
 @Controller('users')
+@Roles(Role.ADMIN, Role.SUPERADMIN)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('')
-  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   getAllUsers() {
     return this.usersService.getAllUsers();
   }
 
   @Get('/:id')
-  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     if (!Number(id)) {
@@ -35,7 +34,6 @@ export class UsersController {
   }
 
   @Delete('/:id')
-  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   deleteUserById(@Param('id') id: string) {
     if (!Number(id)) {
@@ -45,7 +43,6 @@ export class UsersController {
   }
 
   @Post('/new')
-  @Roles(Role.ADMIN, Role.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   createNewUser(@Body() dto: CreateNewUser) {
     return this.usersService.createNewUser(dto);

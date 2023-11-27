@@ -28,7 +28,7 @@ export default function Nav() {
         </Link>
       </div>
       <ul className={styles.menus}>
-        <li suppressHydrationWarning>{user?.email}</li>
+        <li suppressHydrationWarning>{user?.email.split("@")[0]}</li>
         <li className={styles.logOut} onClick={() => logOutUserClick()}>
           LogOut
         </li>

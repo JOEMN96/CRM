@@ -29,7 +29,7 @@ export default function Calender({ config, entries }: ICalenderData) {
   const renderEventContent = (eventInfo: any) => {
     return (
       <Popover content={eventInfo.event.title}>
-        <p style={{ overflow: "hidden" }}>{eventInfo.event.title}</p>
+        <pre style={{ overflow: "hidden" }}>{eventInfo.event.title}</pre>
       </Popover>
     );
   };

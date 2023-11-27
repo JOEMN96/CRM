@@ -1,4 +1,4 @@
-import Nav from "../nav/nav";
+import Nav from "../Nav/nav";
 import type { ReactNode } from "react";
 import Head from "next/head";
 
