@@ -8,10 +8,15 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  Sse,
+  MessageEvent,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Role, Roles } from 'src/auth/common';
 import { CreateNewUser } from './dto';
+import { Observable, interval, map } from 'rxjs';
+import { User } from 'src/utils';
+import { Payload } from 'src/auth/types';
 
 @Controller('users')
 @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -46,5 +51,11 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   createNewUser(@Body() dto: CreateNewUser) {
     return this.usersService.createNewUser(dto);
+  }
+
+  @Sse('notification/sse')
+  sse(@User() user: Payload): Observable<MessageEvent> {
+    console.log(user);
+    return interval(1000).pipe(map((_) => ({ data: { hello: 'world' } })));
   }
 }

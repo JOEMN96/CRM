@@ -20,6 +20,7 @@ model Users {
   active Boolean @default(true)
   projects Project[] 
   calender Calender[]
+  notifications Notification[]
 }
 
 enum Role {
@@ -54,4 +55,18 @@ model Calender {
    userId Int 
    project Project @relation(fields: [projectID], references: [id], onDelete: Cascade)
    projectID Int
+}
+
+model Notification {
+  id    Int    @id @default(autoincrement() )
+  message String
+  type NotificationTypes @default(INFO)
+  createdAt DateTime @default(now())
+  user Users @relation(fields: [userId], references: [id])
+  userId Int 
+}
+
+enum NotificationTypes {
+  INFO
+  WARN
 }

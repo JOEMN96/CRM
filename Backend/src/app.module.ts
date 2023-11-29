@@ -7,6 +7,7 @@ import { AtGuard, RolesGuard } from './auth/common';
 import { ProjectsModule } from './projects/projects.module';
 import { CalenderModule } from './calender/calendar.module';
 import { UsersModule } from './users/users.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersModule } from './users/users.module';
     ProjectsModule,
     CalenderModule,
     UsersModule,
+    NotificationModule,
   ],
   providers: [
     {
