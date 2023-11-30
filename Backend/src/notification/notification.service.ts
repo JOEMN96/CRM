@@ -1,25 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NotificationTypes } from '@prisma/client';
+// import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Payload } from 'src/auth/types';
 
 @Injectable()
 export class NotificationService {
-  constructor(private dataSource: PrismaService) {}
+  constructor(
+    private dataSource: PrismaService, // private eventEmitter: EventEmitter2,
+  ) {}
 
-  async addNotification(
-    id: number,
+  async pushNotifcation(
     message: string,
+    user: Payload,
     type: NotificationTypes = NotificationTypes.INFO,
   ) {
     try {
-      return await this.dataSource.users.update({
-        where: {
-          id,
-        },
+      let notification = await this.dataSource.notification.create({
         data: {
-          notifications: { create: { message, type } },
+          message,
+          userId: user.id,
+        },
+        select: {
+          message: true,
+          id: true,
         },
       });
+
+      // this.eventEmitter.emit('notification.sent', {
+      //   data: [notification],
+      //   user,
+      // });
+      return notification;
     } catch (e) {
       return null;
     }
