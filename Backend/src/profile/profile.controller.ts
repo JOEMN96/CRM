@@ -2,19 +2,22 @@ import {
   Controller,
   Post,
   UseInterceptors,
-  UploadedFiles,
+  UploadedFile,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import fileConfig from 'src/utils/fileStorage.config';
+import profilePicConfig from 'src/utils/profilePicStorage.config';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Post('/profilePic')
-  @UseInterceptors(FileInterceptor('image', fileConfig))
-  addOrUpdateProfilePic(@UploadedFiles() file: Express.Multer.File) {
+  @UseInterceptors(FileInterceptor('profilePic', profilePicConfig))
+  @HttpCode(HttpStatus.OK)
+  addOrUpdateProfilePic(@UploadedFile() file: Express.Multer.File) {
     return this.profileService.addOrUpdateProfilePic(file);
   }
 }

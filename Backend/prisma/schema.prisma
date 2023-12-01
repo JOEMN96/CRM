@@ -33,7 +33,7 @@ model UserProfile {
   id    Int    @id @default(autoincrement())
   user Users @relation( fields: [userId], references: [id])
   userId Int @unique 
-  profilePic String?
+  profilePicFilePath String?
 }
 
 model Project {
