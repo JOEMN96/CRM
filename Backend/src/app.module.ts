@@ -9,6 +9,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { CalenderModule } from './calender/calendar.module';
 import { UsersModule } from './users/users.module';
 import { NotificationModule } from './notification/notification.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NotificationModule } from './notification/notification.module';
     CalenderModule,
     UsersModule,
     NotificationModule,
+    ProfileModule,
   ],
   providers: [
     {
