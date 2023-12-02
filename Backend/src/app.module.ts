@@ -10,11 +10,17 @@ import { CalenderModule } from './calender/calendar.module';
 import { UsersModule } from './users/users.module';
 import { NotificationModule } from './notification/notification.module';
 import { ProfileModule } from './profile/profile.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     // EventEmitterModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '/uploads/public'),
+      serveStaticOptions: { index: false },
+    }),
     AuthModule,
     PrismaModule,
     ProjectsModule,
