@@ -1,4 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { rmSync, existsSync } from 'fs';
+import { join } from 'path';
 import { Payload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -10,8 +12,22 @@ export class ProfileService {
     if (!file) {
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    const path = this.replaceBackwardSlash(file.path);
+    const path = this.getRelativePath(file.path);
 
+    // Remove the old file
+    const { profilePicFilePath } = await this.dataSource.users
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .profile();
+
+    if (profilePicFilePath) {
+      this.removeFile(profilePicFilePath);
+    }
+
+    //  Add the new file
     await this.dataSource.users.update({
       where: {
         id: id,
@@ -26,10 +42,27 @@ export class ProfileService {
     });
   }
 
-  async uploadDocuments(file: Express.Multer.File, { id }: Payload) {}
+  async uploadDocuments(files: Express.Multer.File[], { id }: Payload) {
+    console.log(files);
+    return null;
+  }
 
   // Utility Functions
   replaceBackwardSlash(path: string) {
     return path.replace(/\\/g, '/');
+  }
+
+  getRelativePath(absolutePath: string) {
+    const relativePath = absolutePath.split('dist');
+    return '/dist' + this.replaceBackwardSlash(relativePath[1]);
+  }
+
+  removeFile(path: string) {
+    let filePath = join(__dirname, '..', '..', '..', path);
+    if (existsSync(filePath)) {
+      rmSync(filePath, {
+        force: true,
+      });
+    }
   }
 }
