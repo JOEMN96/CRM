@@ -42,10 +42,30 @@ export class ProfileService {
     });
   }
 
-  async uploadDocuments(files: Express.Multer.File[], { id }: Payload) {
-    console.log(files);
+  async uploadDocuments(files: { documents: Express.Multer.File[] }, { id }: Payload) {
+    console.log();
+    let uploadedFiles: IDocument[] = files.documents.map((file) => {
+      return { documentName: file.filename, path: this.getRelativePath(file.path) };
+    });
+
+    // let res = await this.dataSource.userProfile.create({
+    //   where: {
+    //     userId: id,
+    //   },
+    //   data: {
+    //     documents: {
+    //       createMany: {
+    //         data: uploadedFiles,
+    //       },
+    //     },
+    //   },
+    // });
+    // console.log(res);
+
     return null;
   }
+
+  async getUsersDocuments(user: Payload) {}
 
   // Utility Functions
   replaceBackwardSlash(path: string) {

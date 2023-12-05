@@ -11,7 +11,6 @@ const documentsConfig = {
     else {
       cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'documents'), false);
     }
-    cb(null, true);
   },
   limits: {
     fileSize: 1024 * 1024 * 100, // 100 MB
