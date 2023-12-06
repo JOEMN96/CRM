@@ -1,5 +1,6 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { rmSync, existsSync } from 'fs';
+import { Injectable, HttpException, HttpStatus, StreamableFile } from '@nestjs/common';
+import { Response } from 'express';
+import { rmSync, existsSync, createReadStream } from 'fs';
 import { join } from 'path';
 import { Payload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -43,29 +44,59 @@ export class ProfileService {
   }
 
   async uploadDocuments(files: { documents: Express.Multer.File[] }, { id }: Payload) {
-    console.log();
     let uploadedFiles: IDocument[] = files.documents.map((file) => {
-      return { documentName: file.filename, path: this.getRelativePath(file.path) };
+      return { documentName: file.filename, path: this.getRelativePath(file.path), type: file.mimetype };
     });
 
-    // let res = await this.dataSource.userProfile.create({
-    //   where: {
-    //     userId: id,
-    //   },
-    //   data: {
-    //     documents: {
-    //       createMany: {
-    //         data: uploadedFiles,
-    //       },
-    //     },
-    //   },
-    // });
-    // console.log(res);
-
-    return null;
+    await this.dataSource.users.update({
+      where: {
+        id,
+      },
+      data: {
+        documents: {
+          createMany: {
+            data: uploadedFiles,
+          },
+        },
+      },
+    });
   }
 
-  async getUsersDocuments(user: Payload) {}
+  async getUsersDocuments({ id }: Payload) {
+    return await this.dataSource.users
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .documents();
+  }
+
+  async getFile(filePath: string, res: Response, { id }: Payload): Promise<StreamableFile> {
+    let documents = await this.dataSource.users
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .documents();
+
+    if (documents.length < 1 || !existsSync(join(process.cwd(), filePath))) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    let isDocAvailable = documents.some((doc) => doc.path === filePath);
+
+    if (!isDocAvailable) {
+      throw new HttpException('You don"t have access to view this file', HttpStatus.FORBIDDEN);
+    }
+
+    res.set({
+      'Content-Type': 'application/pdf',
+    });
+    const file = createReadStream(join(process.cwd(), filePath));
+    return new StreamableFile(file);
+  }
 
   // Utility Functions
   replaceBackwardSlash(path: string) {
