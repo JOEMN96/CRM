@@ -34,4 +34,9 @@ export class ProfileController {
   getFile(@Query('filePath') filePath: string, @Res({ passthrough: true }) res: Response, @User() user: Payload): Promise<StreamableFile> {
     return this.profileService.getFile(filePath, res, user);
   }
+
+  @Get('')
+  getProfilePic(@User() user: Payload) {
+    return this.profileService.getProfilePic(user);
+  }
 }

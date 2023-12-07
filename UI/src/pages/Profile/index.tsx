@@ -3,11 +3,21 @@ import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
-
-const Calender = dynamic(import("@/components/Calender"), { ssr: false });
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import styles from "./profile.module.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Profile = () => {
-  return <h1>Profile</h1>;
+  const post = useSelector((state: RootState) => state.profile);
+  console.log(post);
+
+  return (
+    <div className={styles.profileWrapper}>
+      <Avatar shape="square" size={64} icon={<UserOutlined />} />
+    </div>
+  );
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {

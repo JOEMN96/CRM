@@ -16,7 +16,7 @@ export class ProfileService {
     const path = this.getRelativePath(file.path);
 
     // Remove the old file
-    const { profilePicFilePath } = await this.dataSource.users
+    const profile = await this.dataSource.users
       .findUnique({
         where: {
           id,
@@ -24,18 +24,30 @@ export class ProfileService {
       })
       .profile();
 
-    if (profilePicFilePath) {
-      this.removeFile(profilePicFilePath);
+    if (profile && profile.profilePicFilePath) {
+      this.removeFile(profile.profilePicFilePath);
+      await this.dataSource.users.update({
+        where: {
+          id: id,
+        },
+        data: {
+          profile: {
+            update: {
+              profilePicFilePath: path,
+            },
+          },
+        },
+      });
     }
 
     //  Add the new file
     await this.dataSource.users.update({
       where: {
-        id: id,
+        id,
       },
       data: {
         profile: {
-          update: {
+          create: {
             profilePicFilePath: path,
           },
         },
@@ -96,6 +108,22 @@ export class ProfileService {
     });
     const file = createReadStream(join(process.cwd(), filePath));
     return new StreamableFile(file);
+  }
+
+  async getProfilePic({ id }: Payload) {
+    let res = await this.dataSource.users
+      .findUnique({
+        where: {
+          id: id,
+        },
+      })
+      .profile();
+
+    if (res) {
+      return res;
+    } else {
+      return [];
+    }
   }
 
   // Utility Functions
