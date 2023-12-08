@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus, StreamableFile } from '@nestjs/common';
 import { Response } from 'express';
 import { rmSync, existsSync, createReadStream } from 'fs';
+import { resolve } from 'node:path/posix';
 import { join } from 'path';
 import { Payload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -13,7 +14,7 @@ export class ProfileService {
     if (!file) {
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    const path = this.getRelativePath(file.path);
+    const path = this.getRelativePath(file.path).split('uploads/public')[1];
 
     // Remove the old file
     const profile = await this.dataSource.users
@@ -38,19 +39,14 @@ export class ProfileService {
           },
         },
       });
+      return;
     }
 
     //  Add the new file
-    await this.dataSource.users.update({
-      where: {
-        id,
-      },
+    await this.dataSource.userProfile.create({
       data: {
-        profile: {
-          create: {
-            profilePicFilePath: path,
-          },
-        },
+        profilePicFilePath: path,
+        userId: id,
       },
     });
   }
@@ -110,8 +106,8 @@ export class ProfileService {
     return new StreamableFile(file);
   }
 
-  async getProfilePic({ id }: Payload) {
-    let res = await this.dataSource.users
+  async getProfile({ id }: Payload) {
+    let profile = await this.dataSource.users
       .findUnique({
         where: {
           id: id,
@@ -119,10 +115,22 @@ export class ProfileService {
       })
       .profile();
 
-    if (res) {
-      return res;
+    let user = await this.dataSource.users.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        name: true,
+        role: true,
+        id: true,
+        email: true,
+      },
+    });
+
+    if (profile || user) {
+      return { profile, user };
     } else {
-      return [];
+      return {};
     }
   }
 

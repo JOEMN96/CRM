@@ -1,33 +1,45 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface CounterState {
-  id: number;
-  email: string;
-  role: string;
+export interface ProfileState {
+  profile: { userId: number; profilePicFilePath: String };
+  user: {
+    id: number;
+    name: String;
+    role: String;
+    email: string;
+  };
 }
 
-const initialState: CounterState = {
-  email: "",
-  role: "",
-  id: 0,
+const initialState: ProfileState = {
+  profile: {
+    userId: 0,
+    profilePicFilePath: "",
+  },
+  user: {
+    id: 0,
+    name: "",
+    role: "",
+    email: "",
+  },
 };
 
 export const profileSlice = createSlice({
-  name: "counter",
+  name: "profile",
   initialState,
   reducers: {
-    updateBasicProfile: (state, action: PayloadAction<CounterState | null | undefined>) => {
+    updateProfileInit: (state, action: PayloadAction<ProfileState | null | undefined>) => {
       if (action.payload) {
-        state.email = action.payload.email;
-        state.id = action.payload.id;
-        state.role = action.payload.role;
+        return {
+          ...state,
+          ...action.payload,
+        };
       }
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { updateBasicProfile } = profileSlice.actions;
+export const { updateProfileInit } = profileSlice.actions;
 
 export default profileSlice.reducer;

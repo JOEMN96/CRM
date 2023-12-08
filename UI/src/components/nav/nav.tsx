@@ -3,6 +3,11 @@ import styles from "./nav.module.scss";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useUser from "@/utils/useUser";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { updateProfileInit } from "@/store/slices/profileSlice";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const connectSseNotification = () => {
   if (typeof window !== "undefined") {
@@ -21,6 +26,8 @@ const logOutUser = async () => {
 
 export default function Nav() {
   const { push } = useRouter();
+  const dispatch = useDispatch();
+  const [profilePic, setProfilePic] = useState("");
 
   let user = useUser();
 
@@ -28,6 +35,17 @@ export default function Nav() {
     await logOutUser();
     push("/auth/signin");
   };
+
+  useEffect(() => {
+    const getProfile = async () => {
+      let res = await api.get("/profile");
+      dispatch(updateProfileInit(res.data));
+      if (res.data?.profile?.profilePicFilePath) {
+        setProfilePic(res.data.profile.profilePicFilePath);
+      }
+    };
+    getProfile();
+  }, []);
   // connectSseNotification();
 
   return (
@@ -38,10 +56,12 @@ export default function Nav() {
         </Link>
       </div>
       <ul className={styles.menus}>
-        <li suppressHydrationWarning>{user?.email.split("@")[0]}</li>
         <li>
-          <Link href="/Profile">Profile</Link>
+          <Link href="/Profile">
+            <Avatar icon={<UserOutlined />} src={profilePic ? process.env.BASEURL + profilePic : null} />
+          </Link>
         </li>
+        <li suppressHydrationWarning>{user?.email.split("@")[0]}</li>
         <li className={styles.logOut} onClick={() => logOutUserClick()}>
           LogOut
         </li>

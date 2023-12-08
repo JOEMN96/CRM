@@ -37,6 +37,6 @@ export class ProfileController {
 
   @Get('')
   getProfilePic(@User() user: Payload) {
-    return this.profileService.getProfilePic(user);
+    return this.profileService.getProfile(user);
   }
 }

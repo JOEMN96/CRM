@@ -10,12 +10,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 const Profile = () => {
-  const post = useSelector((state: RootState) => state.profile);
-  console.log(post);
+  const profile = useSelector((state: RootState) => state.profile.profile);
+  const baseURL = process.env.BASEURL as string;
 
   return (
     <div className={styles.profileWrapper}>
-      <Avatar shape="square" size={64} icon={<UserOutlined />} />
+      <Avatar
+        shape="square"
+        size={64}
+        icon={<UserOutlined />}
+        src={profile.profilePicFilePath ? baseURL + profile.profilePicFilePath : null}
+      />
     </div>
   );
 };
