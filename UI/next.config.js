@@ -10,6 +10,9 @@ const nextConfig = {
       },
     ];
   },
+  env: {
+    BASEURL: "http://localhost:3001/",
+  },
 };
 
 module.exports = nextConfig;
