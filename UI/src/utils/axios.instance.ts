@@ -2,7 +2,8 @@ import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import Router from "next/router";
 
-const baseURL = "http://localhost:3001/";
+const baseURL = process.env.BASEURL;
+
 const isServer = typeof window === "undefined";
 let context = <GetServerSidePropsContext>{};
 
