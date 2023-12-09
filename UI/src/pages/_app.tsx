@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import { Josefin_Sans } from "next/font/google";
-import { store } from "../store/store";
+import { store } from "../store/store.ts";
 import { Provider } from "react-redux";
 
 const fredoka = Josefin_Sans({ subsets: ["latin"] });

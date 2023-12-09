@@ -3,11 +3,12 @@ import styles from "./nav.module.scss";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useUser from "@/utils/useUser";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateProfileInit } from "@/store/slices/profileSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile } from "@/store/slices/profileSlice";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { RootState } from "@/store/store";
 
 const connectSseNotification = () => {
   if (typeof window !== "undefined") {
@@ -27,7 +28,7 @@ const logOutUser = async () => {
 export default function Nav() {
   const { push } = useRouter();
   const dispatch = useDispatch();
-  const [profilePic, setProfilePic] = useState("");
+  const profile = useSelector((state: RootState) => state.profile.profile.profilePicFilePath);
 
   let user = useUser();
 
@@ -37,14 +38,7 @@ export default function Nav() {
   };
 
   useEffect(() => {
-    const getProfile = async () => {
-      let res = await api.get("/profile");
-      dispatch(updateProfileInit(res.data));
-      if (res.data?.profile?.profilePicFilePath) {
-        setProfilePic(res.data.profile.profilePicFilePath);
-      }
-    };
-    getProfile();
+    dispatch(fetchProfile());
   }, []);
   // connectSseNotification();
 
@@ -58,7 +52,7 @@ export default function Nav() {
       <ul className={styles.menus}>
         <li>
           <Link href="/Profile">
-            <Avatar icon={<UserOutlined />} src={profilePic ? process.env.BASEURL + profilePic : null} />
+            <Avatar icon={<UserOutlined />} src={profile ? (process.env.BASEURL as string) + profile : null} />
           </Link>
         </li>
         <li suppressHydrationWarning>{user?.email.split("@")[0]}</li>

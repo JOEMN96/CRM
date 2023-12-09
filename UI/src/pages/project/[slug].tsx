@@ -30,7 +30,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const page = Number(context.query.slug);
   try {
     const { data } = await api.get("calender/getEntries", {
-      data: { month: 11, projectId: page } as IGetEntriesGet,
+      data: { month: new Date().getMonth() + 1, projectId: page } as IGetEntriesGet,
     });
     return {
       props: {

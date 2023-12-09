@@ -1,3 +1,20 @@
 .profileWrapper {
   padding: 0 10px;
+
+  h2 {
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  .docs {
+    .upload {
+      max-width: 400px;
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+
+    :global .ant-upload-list {
+      margin-top: 20px;
+    }
+  }
 }

@@ -1,7 +1,6 @@
 import { Injectable, HttpException, HttpStatus, StreamableFile } from '@nestjs/common';
 import { Response } from 'express';
 import { rmSync, existsSync, createReadStream } from 'fs';
-import { resolve } from 'node:path/posix';
 import { join } from 'path';
 import { Payload } from 'src/auth/types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -27,7 +26,7 @@ export class ProfileService {
 
     if (profile && profile.profilePicFilePath) {
       this.removeFile(profile.profilePicFilePath);
-      await this.dataSource.users.update({
+      let res = await this.dataSource.users.update({
         where: {
           id: id,
         },
@@ -38,8 +37,11 @@ export class ProfileService {
             },
           },
         },
+        select: {
+          profile: true,
+        },
       });
-      return;
+      return res.profile;
     }
 
     //  Add the new file
@@ -49,6 +51,9 @@ export class ProfileService {
         userId: id,
       },
     });
+    return {
+      profilePicFilePath: path,
+    };
   }
 
   async uploadDocuments(files: { documents: Express.Multer.File[] }, { id }: Payload) {
