@@ -7,13 +7,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProfileService {
+  PROFILE_IMAGE_BASE_PATH = '/backend/uploads/public/';
+  DOCS_BASE_PATH = '/backend/uploads/private/documents';
+
   constructor(private dataSource: PrismaService) {}
 
   async addOrUpdateProfilePic(file: Express.Multer.File, { id }: Payload) {
     if (!file) {
       throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    const path = this.getRelativePath(file.path).split('uploads/public')[1];
+
+    const path = this.getRelativePath(file.path).split(this.PROFILE_IMAGE_BASE_PATH)[1];
 
     // Remove the old file
     const profile = await this.dataSource.users
@@ -25,7 +29,7 @@ export class ProfileService {
       .profile();
 
     if (profile && profile.profilePicFilePath) {
-      this.removeFile(profile.profilePicFilePath);
+      this.removeFile(this.PROFILE_IMAGE_BASE_PATH + profile.profilePicFilePath);
       let res = await this.dataSource.users.update({
         where: {
           id: id,
@@ -58,7 +62,8 @@ export class ProfileService {
 
   async uploadDocuments(files: { documents: Express.Multer.File[] }, { id }: Payload) {
     let uploadedFiles: IDocument[] = files.documents.map((file) => {
-      return { documentName: file.filename, path: this.getRelativePath(file.path), type: file.mimetype };
+      let relPath = this.getRelativePath(file.path).split('/backend/')[1];
+      return { documentName: file.filename, path: relPath, type: file.mimetype };
     });
 
     await this.dataSource.users.update({
@@ -98,14 +103,14 @@ export class ProfileService {
       throw new HttpException('File not found', HttpStatus.NOT_FOUND);
     }
 
-    let isDocAvailable = documents.some((doc) => doc.path === filePath);
+    let isDocAvailable = documents.find((doc) => doc.path === filePath);
 
     if (!isDocAvailable) {
       throw new HttpException('You don"t have access to view this file', HttpStatus.FORBIDDEN);
     }
 
     res.set({
-      'Content-Type': 'application/pdf',
+      'Content-Type': isDocAvailable.type,
     });
     const file = createReadStream(join(process.cwd(), filePath));
     return new StreamableFile(file);
@@ -145,12 +150,11 @@ export class ProfileService {
   }
 
   getRelativePath(absolutePath: string) {
-    const relativePath = absolutePath.split('dist');
-    return '/dist' + this.replaceBackwardSlash(relativePath[1]);
+    return this.replaceBackwardSlash(absolutePath);
   }
 
   removeFile(path: string) {
-    let filePath = join(__dirname, '..', '..', '..', path);
+    let filePath = join(__dirname, '..', '..', '..', '..', path);
     if (existsSync(filePath)) {
       rmSync(filePath, {
         force: true,

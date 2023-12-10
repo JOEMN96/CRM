@@ -3,7 +3,7 @@ import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { Request } from 'express';
 
-const DOCUMENTS_STORAGE_PATH = join(__dirname, '..', '..', '..', 'uploads/private/documents');
+const DOCUMENTS_STORAGE_PATH = join(__dirname, '..', '..', '..', '..', 'uploads/private/documents');
 
 const documentsConfig = {
   fileFilter: (req: Request, file: Express.Multer.File, cb: any) => {

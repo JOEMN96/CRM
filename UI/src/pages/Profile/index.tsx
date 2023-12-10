@@ -11,6 +11,7 @@ import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 import { updateProfilePicPath } from "@/store/slices/profileSlice";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface IProfileProps {
   data: IDocs[];
@@ -30,6 +31,8 @@ const Profile = ({ data }: IProfileProps) => {
   const uploadedDocs = data.map((doc) => {
     return { name: doc.documentName, uid: doc.documentName, path: doc.path };
   });
+
+  const router = useRouter();
 
   const profile = useSelector((state: RootState) => state.profile.profile);
   const baseURL = process.env.BASEURL as string;
@@ -81,9 +84,10 @@ const Profile = ({ data }: IProfileProps) => {
       .then((res: any) => {
         dispatch(updateProfilePicPath(res.data.profilePicFilePath));
         options.onSuccess(res.data, options.file);
+        message.success(`Profile picture updated successfully.`);
       })
       .catch((err: Error) => {
-        console.log(err);
+        message.success(`Error ! Unable to upload profile picture`);
       });
   };
 
@@ -115,9 +119,11 @@ const Profile = ({ data }: IProfileProps) => {
         .post(options.action, data, config)
         .then((res: any) => {
           options.onSuccess(res.data, options.file);
+          router.replace(router.asPath);
+          message.success(`${options.file.name} file uploaded successfully.`);
         })
         .catch((err: Error) => {
-          console.log(err);
+          message.error(`${options.file.name} file upload failed.`);
         });
     },
     showUploadList: { showRemoveIcon: false },

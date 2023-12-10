@@ -18,7 +18,7 @@ import { join } from 'path';
     ConfigModule.forRoot(),
     // EventEmitterModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '/uploads/public'),
+      rootPath: join(__dirname, '..', '..', '/uploads/public'),
       serveStaticOptions: { index: false },
     }),
     AuthModule,
