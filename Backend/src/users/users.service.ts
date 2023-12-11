@@ -18,6 +18,11 @@ export class UsersService {
         role: true,
         active: true,
         id: true,
+        profile: {
+          select: {
+            profilePicFilePath: true,
+          },
+        },
       },
     });
     if (users.length) {
@@ -32,7 +37,18 @@ export class UsersService {
       where: {
         id,
       },
-      select: { email: true, name: true, role: true, active: true, id: true },
+      select: {
+        email: true,
+        name: true,
+        role: true,
+        active: true,
+        id: true,
+        profile: {
+          select: {
+            profilePicFilePath: true,
+          },
+        },
+      },
     });
 
     if (user?.id) {
@@ -122,7 +138,7 @@ export class UsersService {
       })
       .documents();
 
-    if (documents.length < 1 || !existsSync(join(process.cwd(), filePath))) {
+    if ((documents && documents.length < 1) || !existsSync(join(process.cwd(), filePath))) {
       throw new HttpException('File not found', HttpStatus.NOT_FOUND);
     }
 

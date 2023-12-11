@@ -57,6 +57,7 @@ export class UsersController {
     return this.usersService.createNewUser(dto);
   }
 
+  //  Get users every docs
   @Get('/docs/:id')
   @HttpCode(HttpStatus.OK)
   getUsersDocs(@Param('id') id: string) {
@@ -71,7 +72,7 @@ export class UsersController {
     return this.usersService.getFile(path, res, Number(id));
   }
 
-  @Delete('/view/docs?')
+  @Delete('/docs/delete?')
   @HttpCode(HttpStatus.OK)
   deleteFile(@Query('path') path: string, @Query('id') id: string) {
     this.checkId(id);

@@ -99,7 +99,7 @@ export class ProfileService {
       })
       .documents();
 
-    if (documents.length < 1 || !existsSync(join(process.cwd(), filePath))) {
+    if ((documents && documents.length < 1) || !existsSync(join(process.cwd(), filePath))) {
       throw new HttpException('File not found', HttpStatus.NOT_FOUND);
     }
 
