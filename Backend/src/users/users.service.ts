@@ -1,7 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, StreamableFile } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateNewUser } from './dto';
+import { createReadStream, existsSync, unlinkSync } from 'fs';
+import { join } from 'path';
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -75,6 +78,66 @@ export class UsersService {
     });
   }
 
+  async getUsersDocs(id: number) {
+    return await this.dataSource.users
+      .findUnique({
+        where: { id },
+      })
+      .documents();
+  }
+
+  async getFile(filePath: string, res: Response, id: number): Promise<StreamableFile> {
+    let documents = await this.dataSource.users
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .documents();
+
+    if (documents.length < 1 || !existsSync(join(process.cwd(), filePath))) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    let requestedDoc = documents.find((doc) => doc.path === filePath);
+
+    if (!requestedDoc) {
+      throw new HttpException('You don"t have access to view this file', HttpStatus.FORBIDDEN);
+    }
+
+    res.set({
+      'Content-Type': requestedDoc.type,
+    });
+    const file = createReadStream(join(process.cwd(), filePath));
+
+    return new StreamableFile(file);
+  }
+
+  async deleteUserDoc(filePath: string, id: number) {
+    let documents = await this.dataSource.users
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .documents();
+
+    if (documents.length < 1 || !existsSync(join(process.cwd(), filePath))) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    let requestedDoc = documents.find((doc) => doc.path === filePath);
+
+    await this.dataSource.documents.delete({
+      where: {
+        id: requestedDoc.id,
+        userId: id,
+      },
+    });
+    unlinkSync(join(process.cwd(), filePath));
+  }
+
+  //  utility Methods
   async hashPassword(pw: string) {
     return await bcrypt.hash(pw, 10);
   }
