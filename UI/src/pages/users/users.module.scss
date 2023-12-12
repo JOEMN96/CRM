@@ -1,0 +1,18 @@
+.wrapper {
+  padding: 20px 10px;
+  .cardWrap {
+    margin-bottom: 15px;
+  }
+
+  .userNotActive {
+    border: 1px solid red;
+  }
+
+  :global .ant-avatar {
+    margin-bottom: 10px;
+  }
+
+  :global .ant-card-head-wrapper {
+    text-transform: capitalize;
+  }
+}

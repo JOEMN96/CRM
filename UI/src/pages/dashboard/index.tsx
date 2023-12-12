@@ -3,13 +3,25 @@ import Layout from "@/components/Layout";
 import { api, setContext } from "@/utils/axios.instance";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
+import useUser from "@/utils/useUser";
+import Link from "next/link";
 
 const Projects = dynamic(import("@/components/projects/Project"), { ssr: false });
 
 const Dashboard = ({ projects }: Props) => {
+  let user = useUser();
+
   return (
     <>
       <Projects projects={projects} />
+
+      {user?.role !== "USER" ? (
+        <div>
+          View All Users : <Link href="/users"> Here </Link>
+        </div>
+      ) : (
+        ""
+      )}
     </>
   );
 };
