@@ -25,21 +25,15 @@ export class ProjectsService {
       .projects();
   }
 
-  async createNewProject(
-    newProject: ICreateNewProject,
-    id: number,
-  ): Promise<Project> {
-    const { name, description, owner } = newProject;
+  async createNewProject(newProject: ICreateNewProject): Promise<Project> {
+    const { name, description, owner, id } = newProject;
 
     let projectExits = await this.dataSource.project.findFirst({
       where: { name },
     });
 
     if (projectExits) {
-      throw new HttpException(
-        'Project name is taken',
-        HttpStatus.PRECONDITION_FAILED,
-      );
+      throw new HttpException('Project name is taken', HttpStatus.PRECONDITION_FAILED);
     }
 
     return await this.dataSource.project.create({
@@ -55,10 +49,7 @@ export class ProjectsService {
     });
 
     if (!project.length) {
-      throw new HttpException(
-        'No projects found to delete',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('No projects found to delete', HttpStatus.NOT_FOUND);
     }
 
     await this.dataSource.project.deleteMany({
@@ -97,10 +88,7 @@ export class ProjectsService {
       });
       return res;
     } catch (error) {
-      throw new HttpException(
-        'Unable to add user to project',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Unable to add user to project', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -113,6 +101,7 @@ export class ProjectsService {
       select: {
         name: true,
         role: true,
+        id: true,
       },
     });
   }

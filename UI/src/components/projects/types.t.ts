@@ -11,11 +11,13 @@ interface IProjectFormValues {
   name: string;
   description: string;
   owner: string;
+  id: number;
 }
 
 interface IProjectOwners {
   name: string;
   role: string;
+  id: number;
 }
 
 interface IProjectCard {

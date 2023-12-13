@@ -11,8 +11,7 @@ export class CalenderService {
   async addNewEntry(data: NewEntry, user: Payload) {
     let canEdit = this.canAddTimeEntry(data.date);
 
-    if (!canEdit)
-      throw new HttpException('Time frame is closed', HttpStatus.BAD_REQUEST);
+    if (!canEdit) throw new HttpException('Time frame is closed', HttpStatus.BAD_REQUEST);
 
     let currentMonth = this.getCurrentMonth();
 
@@ -23,8 +22,7 @@ export class CalenderService {
       },
     });
 
-    if (!projectID)
-      throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
+    if (!projectID) throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
 
     const entryforDayAlreadyExits = await this.dataSource.calender.findFirst({
       where: {
@@ -89,22 +87,13 @@ export class CalenderService {
         .projects(),
     ]);
 
-    const availableProjectsForUser = isUserHaveAccessToProject.map(
-      (project) => project.id,
-    );
+    const availableProjectsForUser = isUserHaveAccessToProject.map((project) => project.id);
 
-    if (
-      user.role === 'USER' &&
-      !availableProjectsForUser.includes(projectExits.id)
-    ) {
-      throw new HttpException(
-        "User don't have access to this project",
-        HttpStatus.FORBIDDEN,
-      );
+    if (user.role === 'USER' && !availableProjectsForUser.includes(projectExits.id)) {
+      throw new HttpException("User don't have access to this project", HttpStatus.FORBIDDEN);
     }
 
-    if (!projectExits)
-      throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
+    if (!projectExits) throw new HttpException('Unknown Project ID', HttpStatus.BAD_REQUEST);
 
     let entries = res.map(({ createdAt, workDescription, id }) => {
       return {
@@ -148,25 +137,17 @@ export class CalenderService {
 
     try {
       if (customDate) {
-        currentTime =
-          moment(customDate, 'YYYY-MM-DD').format('YYYY-MM-DD') +
-          this.getCurrentTime();
+        currentTime = moment(customDate, 'YYYY-MM-DD').format('YYYY-MM-DD') + this.getCurrentTime();
       } else {
         currentTime = moment().format('YYYY-MM-DD[T]HH:mm:ss');
       }
     } catch (error) {
-      throw new HttpException(
-        'Time Calculation error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Time Calculation error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     let timeframeToEdit = this.getTimeFrameToEdit();
 
-    return moment(currentTime).isBetween(
-      moment(timeframeToEdit.start, 'YYYY-MM-DD[T]HH:mm:ss'),
-      moment(timeframeToEdit.end, 'YYYY-MM-DD[T]HH:mm:ss'),
-    );
+    return moment(currentTime).isBetween(moment(timeframeToEdit.start, 'YYYY-MM-DD[T]HH:mm:ss'), moment(timeframeToEdit.end, 'YYYY-MM-DD[T]HH:mm:ss'));
   }
 
   getTimeFrameToEdit() {

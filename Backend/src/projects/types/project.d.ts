@@ -4,6 +4,7 @@ export interface ICreateNewProject {
   name: string;
   description: string;
   owner: string;
+  id: number;
 }
 
 export interface IAddUserToProject {

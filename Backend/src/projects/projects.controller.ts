@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Get,
-  Req,
-  Post,
-  Body,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  HttpException,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, Delete, HttpCode, HttpStatus, HttpException, Query } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { Role, Roles } from 'src/auth/common';
 import { Request } from 'express';
@@ -41,11 +30,8 @@ export class ProjectsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  createNewProject(
-    @Body() projectDto: CreateNewProject,
-    @User() user: Payload,
-  ) {
-    return this.projectService.createNewProject(projectDto, user.id);
+  createNewProject(@Body() projectDto: CreateNewProject) {
+    return this.projectService.createNewProject(projectDto);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)

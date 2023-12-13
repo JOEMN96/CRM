@@ -12,6 +12,10 @@ export class CreateNewProject {
   @IsString()
   @IsNotEmpty()
   owner: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  id: number;
 }
 
 export class AddUserToProject {

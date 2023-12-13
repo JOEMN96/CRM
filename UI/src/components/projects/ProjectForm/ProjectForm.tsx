@@ -47,6 +47,7 @@ export default function ProjectForm({ onClose, open }: ProjectForm) {
           name: "",
           description: "",
           owner: "",
+          id: 0,
         }}
         onSubmit={async (values: IProjectFormValues, { setSubmitting }: FormikHelpers<IProjectFormValues>) => {
           setTimeout(() => {
@@ -84,12 +85,16 @@ export default function ProjectForm({ onClose, open }: ProjectForm) {
               showSearch
               placeholder="Select a person"
               optionFilterProp="children"
-              onChange={(value) => (values.owner = value)}
+              onChange={(value) => {
+                let vals = value.split("**__**");
+                values.owner = vals[0];
+                values.id = Number(vals[1]);
+              }}
               onSearch={onSearch}
               filterOption={filterOption}
             >
               {projectOwners.map((projectOwner) => (
-                <Select.Option value={projectOwner.name} key={projectOwner.name}>
+                <Select.Option value={projectOwner.name + "**__**" + projectOwner.id} key={projectOwner.name}>
                   {
                     <>
                       <span>{projectOwner.name}</span> - <b>{projectOwner.role}</b>
