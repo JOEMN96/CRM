@@ -4,9 +4,11 @@ import { IoMdAdd } from "react-icons/io";
 import styles from "./project.module.scss";
 import useUser from "@/utils/useUser";
 import { useRouter } from "next/router";
-import ProjectForm from "./ProjectForm/ProjectForm";
 import ProjectCard from "./ProjectCard/ProjectCard";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ProjectForm = dynamic(import("./ProjectForm/ProjectForm"), { ssr: false });
 
 export default function Projects({ projects }: ProjectsProps) {
   const router = useRouter();
@@ -65,7 +67,7 @@ export default function Projects({ projects }: ProjectsProps) {
             style={{ right: 50 }}
             icon={<IoMdAdd />}
           />
-          <ProjectForm open={open} onClose={onClose} />
+          {open && <ProjectForm open={open} onClose={onClose} />}
         </>
       ) : (
         ""

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/utils/axios.instance";
 import useUser from "@/utils/useUser";
+import Link from "next/link";
 
 export default function SignIn() {
   const [errors, seterrors] = useState<IServerErrors>({});
@@ -95,6 +96,7 @@ export default function SignIn() {
                 Sign In
               </Button>
             </div>
+            <Link href="/auth/signup">Don't have account ?</Link>
           </Form>
         )}
       </Formik>
