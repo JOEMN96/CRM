@@ -39,7 +39,7 @@ api.interceptors.response.use(
     //  To fetch access token when it was expired
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         //  For next.js SSR
