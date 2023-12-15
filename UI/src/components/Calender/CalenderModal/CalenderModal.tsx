@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Button, Input, Modal, notification } from "antd";
+import { Button, Modal, notification } from "antd";
 import { IAddTime, ICalenderModal } from "../types";
 import { Formik, Form, FormikHelpers } from "formik";
 import styles from "./calenderModal.module.scss";
 import { api } from "@/utils/axios.instance";
 import { useRouter } from "next/router";
-
-const { TextArea } = Input;
 
 export default function ({ setopenModal, openModal, date, selectedEvent }: ICalenderModal) {
   const router = useRouter();
@@ -55,17 +53,17 @@ export default function ({ setopenModal, openModal, date, selectedEvent }: ICale
               }}
               enableReinitialize={true}
             >
-              {({ handleChange, handleBlur, initialValues, setValues, setFieldValue, setFieldTouched, values }) => (
+              {({ handleChange, handleBlur, initialValues }) => (
                 <Form className={styles.projectForm}>
-                  <TextArea
-                    rows={4}
+                  <textarea
+                    rows={5}
                     name="workDescription"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     defaultValue={initialValues.workDescription}
                     id="workDescription"
                     required
-                  />
+                  ></textarea>
 
                   <div className={styles.btnRight}>
                     <Button htmlType="submit" type="primary" loading={confirmLoading}>
