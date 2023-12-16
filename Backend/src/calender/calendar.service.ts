@@ -3,10 +3,14 @@ import { NewEntry, getAllEntries } from './dtos';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as moment from 'moment';
 import { Payload } from 'src/auth/types';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class CalenderService {
-  constructor(private dataSource: PrismaService) {}
+  constructor(
+    private dataSource: PrismaService,
+    private notificaionService: NotificationService,
+  ) {}
 
   async addNewEntry(data: NewEntry, user: Payload) {
     let canEdit = this.canAddTimeEntry(data.date);
@@ -57,6 +61,9 @@ export class CalenderService {
         createdAt: new Date(data.date),
       },
     });
+
+    //  Send Notification to user
+    this.notificaionService.sendNotifcationToProjectOwner(projectID.id, user.id, data.date);
 
     throw new HttpException('Time entry added', HttpStatus.CREATED);
   }
@@ -147,7 +154,10 @@ export class CalenderService {
 
     let timeframeToEdit = this.getTimeFrameToEdit();
 
-    return moment(currentTime).isBetween(moment(timeframeToEdit.start, 'YYYY-MM-DD[T]HH:mm:ss'), moment(timeframeToEdit.end, 'YYYY-MM-DD[T]HH:mm:ss'));
+    return moment(currentTime).isBetween(
+      moment(timeframeToEdit.start, 'YYYY-MM-DD[T]HH:mm:ss'),
+      moment(timeframeToEdit.end, 'YYYY-MM-DD[T]HH:mm:ss'),
+    );
   }
 
   getTimeFrameToEdit() {
