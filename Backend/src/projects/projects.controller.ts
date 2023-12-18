@@ -30,15 +30,15 @@ export class ProjectsController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  createNewProject(@Body() projectDto: CreateNewProject) {
-    return this.projectService.createNewProject(projectDto);
+  createNewProject(@Body() projectDto: CreateNewProject, @User() user: Payload) {
+    return this.projectService.createNewProject(projectDto, user);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   @Delete('')
   @HttpCode(HttpStatus.OK)
-  deleteProjectByName(@Body() projectDto: DeleteProjectByName) {
-    return this.projectService.deleteProjectByName(projectDto.name);
+  deleteProjectByName(@Body() projectDto: DeleteProjectByName, @User() user: Payload) {
+    return this.projectService.deleteProjectByName(projectDto.name,user);
   }
 
   @Roles(Role.ADMIN, Role.SUPERADMIN)

@@ -3,10 +3,16 @@ import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ICreateNewProject, IPossibleProjectOwners } from './types';
 import { AddUserToProject } from './dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { User } from 'src/utils';
+import { Payload } from 'src/auth/types';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private dataSource: PrismaService) {}
+  constructor(
+    private dataSource: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async getAllprojects(): Promise<Project[]> {
     return this.dataSource.project.findMany({
@@ -25,7 +31,7 @@ export class ProjectsService {
       .projects();
   }
 
-  async createNewProject(newProject: ICreateNewProject): Promise<Project> {
+  async createNewProject(newProject: ICreateNewProject, user: Payload): Promise<Project> {
     const { name, description, owner, id } = newProject;
 
     let projectExits = await this.dataSource.project.findFirst({
@@ -35,13 +41,13 @@ export class ProjectsService {
     if (projectExits) {
       throw new HttpException('Project name is taken', HttpStatus.PRECONDITION_FAILED);
     }
-
+    this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`created new project named - ${name}`, user.id);
     return await this.dataSource.project.create({
       data: { name, description, owner, userId: id },
     });
   }
 
-  async deleteProjectByName(name: string): Promise<HttpException> {
+  async deleteProjectByName(name: string, user: Payload): Promise<HttpException> {
     let project = await this.dataSource.project.findMany({
       where: {
         name,
@@ -57,6 +63,7 @@ export class ProjectsService {
         name,
       },
     });
+    this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`deleted project named - ${name}`, user.id);
     throw new HttpException('Project deleted', HttpStatus.OK);
   }
 

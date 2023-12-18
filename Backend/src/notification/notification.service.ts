@@ -27,7 +27,7 @@ export class NotificationService {
     // });
   }
 
-  async sendNotifcationToProjectOwner(projID: number, userId: number, date: string) {
+  async sendTimeEntryNotifcationToProjectOwner(projID: number, userId: number, date: string) {
     let [project, user] = await Promise.all([
       await this.dataSource.project.findUnique({ where: { id: projID } }),
       await this.dataSource.users.findUnique({ where: { id: userId } }),
@@ -35,6 +35,16 @@ export class NotificationService {
 
     const MESSAGE = `${user.name} added new Entry dated: ${date}`;
     this.sendNotificationToUser(MESSAGE, project.userId);
+  }
+
+  async sendProjetRelatedNotificationToSuperAdmin(msg: string, userId: number) {
+    let [superAdmin, user] = await Promise.all([
+      await this.dataSource.users.findFirst({ where: { role: 'SUPERADMIN' } }),
+      await this.dataSource.users.findFirst({ where: { id: userId } }),
+    ]);
+
+    const MESSAGE = `${user.name} ${msg}`;
+    this.sendNotificationToUser(MESSAGE, superAdmin.id);
   }
 
   async getUserNotification(id: number) {

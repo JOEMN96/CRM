@@ -57,7 +57,7 @@ export default function Projects({ projects }: ProjectsProps) {
           : ""}
       </div>
 
-      {user && user.role === "SUPERADMIN" ? (
+      {user && user.role != "USER" ? (
         <>
           <FloatButton
             shape="circle"
