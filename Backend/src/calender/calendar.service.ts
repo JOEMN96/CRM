@@ -63,7 +63,7 @@ export class CalenderService {
     });
 
     //  Send Notification to user
-    this.notificaionService.sendNotifcationToProjectOwner(projectID.id, user.id, data.date);
+    this.notificaionService.sendTimeEntryNotifcationToProjectOwner(projectID.id, user.id, data.date);
 
     throw new HttpException('Time entry added', HttpStatus.CREATED);
   }
