@@ -3,12 +3,13 @@ import styles from "./nav.module.scss";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useUser from "@/utils/useUser";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "@/store/slices/profileSlice";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { RootState } from "@/store/store";
+import { IoIosNotifications } from "react-icons/io";
 
 const connectSseNotification = () => {
   if (typeof window !== "undefined") {
@@ -29,6 +30,8 @@ export default function Nav() {
   const { push } = useRouter();
   const dispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.profile.profile.profilePicFilePath);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [showNotification, setShowNotification] = useState(false);
 
   let user = useUser();
 
@@ -37,8 +40,35 @@ export default function Nav() {
     push("/auth/signin");
   };
 
+  const getInitialNotifications = async () => {
+    let { data } = await api.get("notification");
+    setNotifications(data as INotification[]);
+  };
+
+  const handleNotificationClick = () => {
+    setShowNotification(!showNotification);
+  };
+
+  let ref = useRef<any>();
+
   useEffect(() => {
     dispatch(fetchProfile());
+    getInitialNotifications();
+
+    const handler = (event: MouseEvent | TouchEvent) => {
+      // console.log(ref);
+
+      if (showNotification && ref.current && !ref.current.contains(event.target)) {
+        setShowNotification(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
   }, []);
   // connectSseNotification();
 
@@ -50,6 +80,10 @@ export default function Nav() {
         </Link>
       </div>
       <ul className={styles.menus}>
+        <li className={styles.notification}>
+          <IoIosNotifications onClick={handleNotificationClick} />
+          <div ref={ref} className={styles.notificationContainer + (showNotification ? ` ${styles.active}` : "")}></div>
+        </li>
         <li>
           <Link href="/Profile">
             <Avatar icon={<UserOutlined />} src={profile ? (process.env.BASEURL as string) + profile : null} />

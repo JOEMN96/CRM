@@ -2,7 +2,7 @@ nav.MainNav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   padding: 15px 10px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
   .logo {
@@ -28,6 +28,33 @@ nav.MainNav {
       color: red;
       font-weight: 500;
       font-size: 14px;
+    }
+
+    .notification {
+      font-size: 27px;
+      position: relative;
+      svg {
+        vertical-align: text-bottom;
+      }
+
+      & > div {
+        display: none;
+      }
+
+      .notificationContainer.active {
+        display: block;
+        background-color: #ffff;
+        min-width: 300px;
+        min-height: 300px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 35px;
+        z-index: 2;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        border-radius: 0 0 10px 10px;
+        padding: 10px;
+      }
     }
   }
 }
