@@ -46,6 +46,7 @@ nav.MainNav {
         background-color: #ffff;
         min-width: 300px;
         min-height: 300px;
+        max-height: 300px;
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
@@ -54,6 +55,13 @@ nav.MainNav {
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         border-radius: 0 0 10px 10px;
         padding: 10px;
+        overflow-y: scroll;
+      }
+
+      .notificationItem {
+        p {
+          font-size: 16px;
+        }
       }
     }
   }

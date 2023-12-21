@@ -41,7 +41,9 @@ export class ProjectsService {
     if (projectExits) {
       throw new HttpException('Project name is taken', HttpStatus.PRECONDITION_FAILED);
     }
-    this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`created new project named - ${name}`, user.id);
+    if (user.role !== 'SUPERADMIN') {
+      this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`Created new project named - ${name}`, user.id);
+    }
     return await this.dataSource.project.create({
       data: { name, description, owner, userId: id },
     });
@@ -63,7 +65,9 @@ export class ProjectsService {
         name,
       },
     });
-    this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`deleted project named - ${name}`, user.id);
+    if (user.role !== 'SUPERADMIN') {
+      this.notificationService.sendProjetRelatedNotificationToSuperAdmin(`Deleted project named - ${name}`, user.id);
+    }
     throw new HttpException('Project deleted', HttpStatus.OK);
   }
 

@@ -82,7 +82,14 @@ export default function Nav() {
       <ul className={styles.menus}>
         <li className={styles.notification}>
           <IoIosNotifications onClick={handleNotificationClick} />
-          <div ref={ref} className={styles.notificationContainer + (showNotification ? ` ${styles.active}` : "")}></div>
+          <div ref={ref} className={styles.notificationContainer + (showNotification ? ` ${styles.active}` : "")}>
+            {showNotification &&
+              notifications.map((notification) => (
+                <div className={styles.notificationItem}>
+                  <p key={notification.id}>{notification.message}</p>
+                </div>
+              ))}
+          </div>
         </li>
         <li>
           <Link href="/Profile">
