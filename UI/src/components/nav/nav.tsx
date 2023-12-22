@@ -10,6 +10,7 @@ import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { RootState } from "@/store/store";
 import { IoIosNotifications } from "react-icons/io";
+import { Badge } from "antd";
 
 const connectSseNotification = () => {
   if (typeof window !== "undefined") {
@@ -81,7 +82,10 @@ export default function Nav() {
       </div>
       <ul className={styles.menus}>
         <li className={styles.notification}>
-          <IoIosNotifications onClick={handleNotificationClick} />
+          <Badge count={0} showZero>
+            <IoIosNotifications size={30} onClick={handleNotificationClick} />
+          </Badge>
+
           <div ref={ref} className={styles.notificationContainer + (showNotification ? ` ${styles.active}` : "")}>
             {showNotification &&
               notifications.map((notification) => (
